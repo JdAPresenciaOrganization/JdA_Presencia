@@ -1,4 +1,4 @@
-package com.example.jdapresencia.ui.gallery;
+package com.example.jdapresencia.ui.gestionar_trabajadores;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
 
-public class GalleryFragment extends Fragment {
+public class GestionarTrabajadoresFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private GestionarTrabajadoresViewModel gestionarTrabajadoresViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(this, new Observer<String>() {
+        gestionarTrabajadoresViewModel =
+                ViewModelProviders.of(this).get(GestionarTrabajadoresViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_gestionar_trabajadores, container, false);
+        final TextView textView = root.findViewById(R.id.text_gestionar_trabajadores);
+        gestionarTrabajadoresViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
