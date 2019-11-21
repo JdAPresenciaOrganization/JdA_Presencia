@@ -1,16 +1,16 @@
-package com.example.jdapresencia.ui.slideshow;
+package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SlideshowViewModel extends ViewModel {
+public class BuscadorTrabajadoresViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public SlideshowViewModel() {
+    public BuscadorTrabajadoresViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        mText.setValue("Este es el buscador de trabajadores");
     }
 
     public LiveData<String> getText() {
