@@ -2,6 +2,7 @@ package com.example.jdapresencia;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     @Override
     public void loginSuccess() {
         Toast.makeText(getApplicationContext(), "Login OK",Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     @Override
