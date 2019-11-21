@@ -1,4 +1,4 @@
-package com.example.jdapresencia.ui.tools;
+package com.example.jdapresencia.ui.mis_registros;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
