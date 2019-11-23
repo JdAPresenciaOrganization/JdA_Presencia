@@ -19,8 +19,7 @@
         <item
             android:id="@+id/nav_mis_registros"
             android:icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            android:title="@string/menu_mis_registros"
-            android:visible="false"/>
+            android:title="@string/menu_mis_registros" />
     </group>
 
     <item android:title="Communicate">
