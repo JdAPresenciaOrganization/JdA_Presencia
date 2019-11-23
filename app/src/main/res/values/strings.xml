@@ -13,6 +13,7 @@
     <string name="menu_gestionar_trabajadores">Gestionar trabajadores</string>
     <string name="menu_buscador_trabajadores">Buscador trabajadores</string>
     <string name="menu_mis_registros">Mis registros</string>
+
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
 </resources>

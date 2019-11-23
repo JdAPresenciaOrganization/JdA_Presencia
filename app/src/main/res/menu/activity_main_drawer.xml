@@ -19,7 +19,8 @@
         <item
             android:id="@+id/nav_mis_registros"
             android:icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            android:title="@string/menu_mis_registros" />
+            android:title="@string/menu_mis_registros"
+            android:visible="false"/>
     </group>
 
     <item android:title="Communicate">
@@ -27,11 +28,13 @@
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share" />
+                android:title="@string/menu_share"
+                android:visible="false"/>
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send" />
+                android:title="@string/menu_send"
+                android:visible="false"/>
         </menu>
     </item>
 
