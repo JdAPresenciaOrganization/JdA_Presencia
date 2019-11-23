@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
 
-public class ToolsFragment extends Fragment {
+public class RegistrosFragment extends Fragment {
 
-    private ToolsViewModel toolsViewModel;
+    private RegistrosViewModel registrosViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        toolsViewModel =
-                ViewModelProviders.of(this).get(ToolsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_tools, container, false);
-        final TextView textView = root.findViewById(R.id.text_tools);
-        toolsViewModel.getText().observe(this, new Observer<String>() {
+        registrosViewModel =
+                ViewModelProviders.of(this).get(RegistrosViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_registros, container, false);
+        final TextView textView = root.findViewById(R.id.text_registros);
+        registrosViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
