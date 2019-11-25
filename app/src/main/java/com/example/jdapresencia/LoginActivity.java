@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -47,14 +48,25 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
+    public void loginSuccessAdmin() {
+        //Toast.makeText(getApplicationContext(), "Login OK ADMIN",Toast.LENGTH_SHORT).show();
+        goToNextActivity("admin");
+    }
+
+    @Override
     public void loginSuccess() {
-        //Toast.makeText(getApplicationContext(), "Login OK",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
+        //Toast.makeText(getApplicationContext(), "Login OK USER",Toast.LENGTH_SHORT).show();
+        goToNextActivity("trabajador");
     }
 
     @Override
     public void loginError() {
         Toast.makeText(getApplicationContext(), "Login not ok",Toast.LENGTH_SHORT).show();
+    }
+
+    protected void goToNextActivity(String tipo){
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("rol_key", tipo);
+        startActivity(intent);
     }
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -51,6 +52,17 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        //Se muestra el navigation diferente segun el tipo de usuario
+        String tipoUsuario = getIntent().getStringExtra("rol_key");
+
+        Menu nav_Menu = navigationView.getMenu();
+        if (tipoUsuario.equals("admin")){
+            nav_Menu.findItem(R.id.nav_mis_registros).setVisible(false);
+        } else {
+            nav_Menu.findItem(R.id.nav_gestionar_trabajadores).setVisible(false);
+            nav_Menu.findItem(R.id.nav_buscador_trabajadores).setVisible(false);
+        }
     }
 
     @Override
