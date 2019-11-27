@@ -1,5 +1,7 @@
 package com.example.jdapresencia;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,10 +56,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         //Se muestra el navigation diferente segun el tipo de usuario
-        String tipoUsuario = getIntent().getStringExtra("rol_key");
+        String userType = getIntent().getStringExtra("rol_key");
+
+
+        SharedPreferences pref = this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor edt = pref.edit();
+        edt.putString("tipo_key", "clave");
+        edt.commit();
 
         Menu nav_Menu = navigationView.getMenu();
-        if (tipoUsuario.equals("admin")){
+        if (userType.equals("admin")){
             nav_Menu.findItem(R.id.nav_mis_registros).setVisible(false);
         } else {
             nav_Menu.findItem(R.id.nav_gestionar_trabajadores).setVisible(false);

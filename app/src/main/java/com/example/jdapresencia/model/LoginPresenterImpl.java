@@ -2,7 +2,6 @@ package com.example.jdapresencia.model;
 
 import android.text.TextUtils;
 
-import com.example.jdapresencia.User;
 import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.view.LoginView;
 
@@ -45,8 +44,8 @@ public class LoginPresenterImpl implements LoginPresenter {
     public ArrayList<User> getUserList() {
         ArrayList<User> userList = new ArrayList<>();
 
-        User user1 = new User("1", "admin", "admin", "1234");
-        User user2 = new User("2", "trabajador", "andrei", "1234");
+        User user1 = new User("1", "admin", "admin", "admin");
+        User user2 = new User("2", "trabajador", "employee", "1234");
 
         userList.add(user1);
         userList.add(user2);
