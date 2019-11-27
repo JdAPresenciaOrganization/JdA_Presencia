@@ -6,4 +6,5 @@ public interface LoginView {
     void loginSuccessAdmin();
     void loginSuccess();
     void loginError();
+    void goToNextActivity(String userType);
 }

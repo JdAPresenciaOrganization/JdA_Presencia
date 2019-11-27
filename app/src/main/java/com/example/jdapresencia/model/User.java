@@ -1,6 +1,8 @@
-package com.example.jdapresencia;
+package com.example.jdapresencia.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     String idU, rol, username, password;
 

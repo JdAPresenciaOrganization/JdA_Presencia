@@ -1,6 +1,6 @@
 package com.example.jdapresencia.presenter;
 
-import com.example.jdapresencia.User;
+import com.example.jdapresencia.model.User;
 
 import java.util.ArrayList;
 
