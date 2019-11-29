@@ -13,9 +13,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
-import com.example.jdapresencia.model.User;
-
-import java.util.List;
 
 public class BuscadorTrabajadoresFragment extends Fragment {
 
@@ -26,28 +23,13 @@ public class BuscadorTrabajadoresFragment extends Fragment {
         buscadorTrabajadoresViewModel =
                 ViewModelProviders.of(this).get(BuscadorTrabajadoresViewModel.class);
         View root = inflater.inflate(R.layout.fragment_buscador_trabajadores, container, false);
-
-        final TextView textView = root.findViewById(R.id.testfinder);
-
-        buscadorTrabajadoresViewModel.getAllUsersArray().observe(this, new Observer<List<User>>() {
+        final TextView textView = root.findViewById(R.id.text_buscador_trabajadores);
+        buscadorTrabajadoresViewModel.getText().observe(this, new Observer<String>() {
             @Override
-            public void onChanged(List<User> users) {
-                textView.setText(users.get(1).getUsername());
+            public void onChanged(@Nullable String s) {
+                textView.setText(s);
             }
         });
-
-
-
-
-        //buscadorTrabajadoresViewModel.getText().observe(this, new Observer<String>() {
-        //    @Override
-        //    public void onChanged(@Nullable String s) {
-        //        textView.setText(s);
-        //    }
-        //});
         return root;
     }
-
-
-
 }
