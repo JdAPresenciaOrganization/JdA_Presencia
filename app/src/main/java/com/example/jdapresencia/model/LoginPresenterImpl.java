@@ -2,7 +2,6 @@ package com.example.jdapresencia.model;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.example.jdapresencia.LoginActivity;
 import com.example.jdapresencia.presenter.LoginPresenter;

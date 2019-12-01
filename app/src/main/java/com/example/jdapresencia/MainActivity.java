@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
         //Se muestra el navigation diferente segun el tipo de usuario
         String userType = getIntent().getStringExtra("rol_key");
 
-
         SharedPreferences pref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor edt = pref.edit();
         edt.putString("tipo_key", "clave");
