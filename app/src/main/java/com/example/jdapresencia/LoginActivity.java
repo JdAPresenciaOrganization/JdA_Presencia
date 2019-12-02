@@ -65,15 +65,15 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void loginSuccessAdmin() {
+    public void loginSuccessAdmin(String sessionUserId, String userType) {
         //Toast.makeText(getApplicationContext(), "Login OK ADMIN",Toast.LENGTH_SHORT).show();
-        goToNextActivity("admin");
+        goToNextActivity(sessionUserId, userType);
     }
 
     @Override
-    public void loginSuccess() {
+    public void loginSuccess(String sessionUserId, String userType) {
         //Toast.makeText(getApplicationContext(), "Login OK USER",Toast.LENGTH_SHORT).show();
-        goToNextActivity("trabajador");
+        goToNextActivity(sessionUserId, userType);
     }
 
     @Override
@@ -82,8 +82,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     }
 
     @Override
-    public void goToNextActivity(String userType) {
+    public void goToNextActivity(String sessionUserId, String userType) {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.putExtra("idSession_key", sessionUserId);
         intent.putExtra("rol_key", userType);
         startActivity(intent);
     }

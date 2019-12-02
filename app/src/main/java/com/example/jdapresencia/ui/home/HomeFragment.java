@@ -26,9 +26,9 @@ public class HomeFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         SharedPreferences pref = getActivity().getPreferences(getActivity().MODE_PRIVATE);
-        String id = pref.getString("tipo_key", "");
+        String idSession = pref.getString("sessionUserId_key", "");
 
-        Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", id);
+        Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ id sesion usuario", idSession);
 
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);

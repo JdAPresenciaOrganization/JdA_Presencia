@@ -25,18 +25,24 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void checkLogin(String user, String pass) {
+        String userType, sessionUserId;
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)){
             mLoginView.loginValidations();
         } else {
             for (int i = 0; i < getUserList().size(); i++){
                 if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
                     && getUserList().get(i).getRol().equals("admin")) {
-                    mLoginView.loginSuccessAdmin();
+                    sessionUserId = getUserList().get(i).getIdU();
+                    userType = getUserList().get(i).getRol();
+                    mLoginView.loginSuccessAdmin(sessionUserId, userType);
                     userFound = 1;
                 } else if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
                         && getUserList().get(i).getRol().equals("trabajador")){
-                    mLoginView.loginSuccess();
+                    sessionUserId = getUserList().get(i).getIdU();
+                    userType = getUserList().get(i).getRol();
+                    mLoginView.loginSuccess(sessionUserId, userType);
                     userFound = 1;
+                    sessionUserId = getUserList().get(i).getIdU();
                 }
             }
             if (userFound != 1){
