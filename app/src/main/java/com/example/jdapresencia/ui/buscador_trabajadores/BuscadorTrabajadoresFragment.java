@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jdapresencia.R;
+import com.example.jdapresencia.model.User;
+
+import java.util.List;
 
 public class BuscadorTrabajadoresFragment extends Fragment {
 
