@@ -58,9 +58,12 @@ public class MainActivity extends AppCompatActivity {
         //Se muestra el navigation diferente segun el tipo de usuario
         String userType = getIntent().getStringExtra("rol_key");
 
+        //Sesión con el ID del usuario que hace login utilizando SharedPreferences
+        String idSession = getIntent().getStringExtra("idSession_key");
+
         SharedPreferences pref = this.getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor edt = pref.edit();
-        edt.putString("tipo_key", "clave");
+        edt.putString("sessionUserId_key", idSession);
         edt.commit();
 
         Menu nav_Menu = navigationView.getMenu();
