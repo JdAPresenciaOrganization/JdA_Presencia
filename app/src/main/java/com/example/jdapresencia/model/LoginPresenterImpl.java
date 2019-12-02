@@ -1,16 +1,22 @@
 package com.example.jdapresencia.model;
 
+import android.content.Context;
 import android.text.TextUtils;
 
+import com.example.jdapresencia.LoginActivity;
 import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.view.LoginView;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class LoginPresenterImpl implements LoginPresenter {
 
     LoginView mLoginView;
-    Boolean userLoginOK = false;
+    int userFound = 0;
 
     //Constructor
     public LoginPresenterImpl(LoginView mLoginView) {
@@ -26,30 +32,39 @@ public class LoginPresenterImpl implements LoginPresenter {
                 if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
                     && getUserList().get(i).getRol().equals("admin")) {
                     mLoginView.loginSuccessAdmin();
-                    userLoginOK = true;
+                    userFound = 1;
                 } else if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
                         && getUserList().get(i).getRol().equals("trabajador")){
                     mLoginView.loginSuccess();
-                    userLoginOK = true;
+                    userFound = 1;
                 }
-
-                if (!userLoginOK){
-                    mLoginView.loginError();
-                }
+            }
+            if (userFound != 1){
+                mLoginView.loginError();
             }
         }
     }
 
     @Override
     public ArrayList<User> getUserList() {
+        Context context = LoginActivity.getAppContext();
         ArrayList<User> userList = new ArrayList<>();
+        try {
+            File file = new File(context.getFilesDir().getPath() + LoginActivity.FILE_NAME);
 
-        User user1 = new User("1", "admin", "admin", "admin");
-        User user2 = new User("2", "trabajador", "employee", "1234");
+            FileInputStream filein = new FileInputStream(file);
+            ObjectInputStream dataIS = new ObjectInputStream(filein);
 
-        userList.add(user1);
-        userList.add(user2);
+            for (User userFromFileList : (ArrayList<User>) dataIS.readObject()) {
+                userList.add(userFromFileList);
+            }
 
+            dataIS.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException t) {
+            t.printStackTrace();
+        }
         return userList;
     }
 }
