@@ -24,8 +24,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
+
+    public static String FILE_NAME = "/usersFile.dat";
+    private static Context context;
 
     //Variables
     EditText user, pass;
@@ -37,14 +41,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        LoginActivity.context = getApplicationContext();
 
-        try {
-            usersFile(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
+        createUsersFile(this);
 
         //Recoger valores del layout en variables
         user = findViewById(R.id.username);
@@ -90,40 +89,46 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         startActivity(intent);
     }
 
-    protected void usersFile(Context context) throws IOException {
-        String FILE_NAME = "/usersFile.dat";
-
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-        FileOutputStream fileout = new FileOutputStream(file);
-        ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
-
-        User user1 = new User("1", "admin", "admin", "admin");
-
-        dataOS.writeObject(user1);
-        dataOS.close();
-    }
-
-    public void readUsersFile(Context context) throws IOException {
-        User readUser;
-
-        String FILE_NAME = "/usersFile.dat";
-
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-        FileInputStream filein = new FileInputStream(file);
-        ObjectInputStream dataIS = new ObjectInputStream(filein);
-
+    /**
+     * Para primera vez que se inicia la app se mira si existe el fichero .dat,
+     * si no, se crea con el admin y un primer trabajador de muestra
+     * @param context
+     */
+    protected void createUsersFile(Context context) {
         try {
-            while (true) {
-                readUser = (User) dataIS.readObject();
-                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", readUser.getIdU());
-                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", readUser.getUsername());
+            //Fichero .dat guardado en /data/data/com.example.jdapresencia -> files
+            File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+
+            if(!file.exists()){
+                /* Creación de arrayList con un admin y un trabajador
+                   que se guardarán en un fichero serializado */
+                ArrayList<User> userListFile = new ArrayList<>();
+
+                /* De momento el administrador de la aplicación usará este usuario, no se podrán
+                   crear más administradores (de momento), el trabajador es para testear,
+                    en la aplicación se podrán añadir nuevos trabajadores */
+                User user1 = new User("1", "admin", "admin", "1234");
+                User user2 = new User("2", "trabajador", "worker", "test");
+
+                userListFile.add(user1);
+                userListFile.add(user2);
+
+                FileOutputStream fileout = new FileOutputStream(file);
+                ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+
+                dataOS.writeObject(userListFile);
+                dataOS.close();
             }
-        } catch (EOFException eo) {
-            Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@@@", "finished reading");
-        } catch (ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        dataIS.close();
+    /**
+     * Función que devuelve el contexto de LoginActivity
+     * @return
+     */
+    public static Context getAppContext() {
+        return LoginActivity.context;
     }
 }
