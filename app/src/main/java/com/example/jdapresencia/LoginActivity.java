@@ -19,7 +19,6 @@ import com.example.jdapresencia.view.LoginView;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -98,8 +97,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
         ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
 
         User user1 = new User("1", "admin", "admin", "admin");
+        User user2 = new User("2", "trabajador", "worker", "worker");
 
         dataOS.writeObject(user1);
+        dataOS.writeObject(user2);
+        dataOS.writeObject(user3);
+        dataOS.writeObject(user4);
         dataOS.close();
     }
 
