@@ -1,15 +1,24 @@
 package com.example.jdapresencia.ui.buscador_trabajadores;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import android.util.Log;
 import com.example.jdapresencia.model.User;
 
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 public class BuscadorTrabajadoresViewModel extends ViewModel {
+
+    private Context context;
 
     //private MutableLiveData<String> mText;
     private MutableLiveData<ArrayList<User>> ListaMutableAllUsers;
@@ -17,27 +26,60 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
     public BuscadorTrabajadoresViewModel() {
         //mText = new MutableLiveData<>();
         //mText.setValue("Este es el buscador de trabajadores");
-        ListaMutableAllUsers = new MutableLiveData<>();
 
-        User user1 = new User("1", "admin", "admin", "admin");
-        User user2 = new User("2", "trabajador", "employee", "1234");
-
-        ArrayList<User> ListaAllUsers = new ArrayList<>();
-        ListaAllUsers.add(user1);
-        ListaAllUsers.add(user2);
-        ListaMutableAllUsers.setValue(ListaAllUsers);
 
 
     }
 
-    public LiveData<ArrayList<User>> getUsersBy(String campo, String valor) {
+    public void pasarContexto(Context context) {
+        this.context = context;
 
-        MutableLiveData<ArrayList<User>> usersArray = new MutableLiveData<>();
+    }
+
+    public ArrayList<User> getUsersBy( String campo, String valor) {
+
+        ArrayList<User> usersArray = new ArrayList<>();
+
+        try {
+            String FILE_NAME = "/usersFile.dat";
+
+            File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+            FileInputStream filein = new FileInputStream(file);
+            ObjectInputStream entrada = new ObjectInputStream(filein);
+
+            while (true) {
+
+                User usuario = (User) entrada.readObject();
+                Log.e("test", usuario.getUsername());
+
+                switch (campo) {
+                    case "idU":
+                        if (usuario.getIdU().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "rol":
+                        if (usuario.getRol().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "username":
+                        if (usuario.getUsername().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                }
+                break;
+
+            }
+            entrada.close();
+        } catch (IndexOutOfBoundsException | NullPointerException | IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         return usersArray;
     };
 
-    public LiveData<ArrayList<User>> getAllUsersArray() {return ListaMutableAllUsers;}
     //public LiveData<String> getText() {
     //    return mText;
     //}
