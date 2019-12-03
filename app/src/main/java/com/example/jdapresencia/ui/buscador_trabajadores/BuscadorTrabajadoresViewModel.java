@@ -51,8 +51,6 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
             while (usuario!=null) {
 
-                Log.e("test", usuario.getUsername());
-
                 switch (campo) {
                     case "idU":
                         if (usuario.getIdU().equals(valor)) {
@@ -69,6 +67,8 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
                             usersArray.add(usuario);
                         }
                         break;
+                    default:
+                        usersArray.add(usuario);
                 }
 
                 usuario = (User) entrada.readObject();

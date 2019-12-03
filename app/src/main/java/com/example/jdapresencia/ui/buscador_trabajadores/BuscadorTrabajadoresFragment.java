@@ -37,6 +37,10 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         final EditText query = root.findViewById(R.id.query);
 
+        recyclerViewUser.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos","todos"));
+        recyclerViewUser.setAdapter(mAdapter);
 
 
 
