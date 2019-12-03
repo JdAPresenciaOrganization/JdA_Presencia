@@ -60,13 +60,17 @@ public class LoginPresenterImpl implements LoginPresenter {
             FileInputStream filein = new FileInputStream(file);
             ObjectInputStream dataIS = new ObjectInputStream(filein);
 
+            for (User userFromFileList : (ArrayList<User>) dataIS.readObject()) {
+                userList.add(userFromFileList);
+            }
+            /*
             User user = (User) dataIS.readObject();
 
             while (user!=null) {
                 userList.add(user);
                 user = (User) dataIS.readObject();
-
             }
+             */
 
             dataIS.close();
         } catch (IOException e) {
