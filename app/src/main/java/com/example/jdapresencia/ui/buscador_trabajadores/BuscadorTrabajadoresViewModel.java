@@ -47,9 +47,10 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
             FileInputStream filein = new FileInputStream(file);
             ObjectInputStream entrada = new ObjectInputStream(filein);
 
-            while (true) {
+            User usuario = (User) entrada.readObject();
 
-                User usuario = (User) entrada.readObject();
+            while (usuario!=null) {
+
                 Log.e("test", usuario.getUsername());
 
                 switch (campo) {
@@ -69,7 +70,8 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
                         }
                         break;
                 }
-                break;
+
+                usuario = (User) entrada.readObject();
 
             }
             entrada.close();
