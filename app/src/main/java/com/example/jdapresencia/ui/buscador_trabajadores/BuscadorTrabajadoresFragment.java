@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,13 +17,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.User;
 
-import java.util.List;
+import java.util.ArrayList;
+
 
 public class BuscadorTrabajadoresFragment extends Fragment {
 
 
     private BuscadorTrabajadoresViewModel buscadorTrabajadoresViewModel;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -31,30 +33,30 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         buscadorTrabajadoresViewModel.pasarContexto(getContext());
 
-        //TEST
+        final RecyclerView recyclerViewUser = (RecyclerView) root.findViewById(R.id.recyclerViewUserFinder);
 
-        final TextView textView = root.findViewById(R.id.testfinder);
-
-        textView.setText(Integer.toString(buscadorTrabajadoresViewModel.getUsersBy("username", "trabajador").size()));
-
-
-        //RECYCLER VIEW
-
-        RecyclerView recyclerViewUser = (RecyclerView) root.findViewById(R.id.recyclerViewUserFinder);
-
-        recyclerViewUser.setHasFixedSize(true);
-
-        recyclerViewUser.setLayoutManager(new LinearLayoutManager(this.getContext()));
-
-        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("rol", "admin"));
-        recyclerViewUser.setAdapter(mAdapter);
-
-        //FALTA ARREGLAR ADAPTER Y RECYCLERVIEW
+        final EditText query = root.findViewById(R.id.query);
 
 
 
 
+        //BOTON
 
+        Button boton_buscar = root.findViewById(R.id.boton_buscar);
+
+        boton_buscar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String string = query.getText().toString();
+
+                recyclerViewUser.setLayoutManager(new LinearLayoutManager(getContext()));
+
+                UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("username", string));
+                recyclerViewUser.setAdapter(mAdapter);
+
+            }
+        });
 
         //buscadorTrabajadoresViewModel.getText().observe(this, new Observer<String>() {
         //    @Override
@@ -68,9 +70,9 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
     public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
-        private List<User> usersList;
+        private ArrayList<User> usersList;
 
-        public UserAdapter(List<User> usersList) {
+        public UserAdapter(ArrayList<User> usersList) {
             this.usersList = usersList;
         }
 
