@@ -9,6 +9,10 @@
             android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/menu_home" />
         <item
+            android:id="@+id/nav_home_admin"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="@string/menu_home_admin" />
+        <item
             android:id="@+id/nav_gestionar_trabajadores"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/menu_gestionar_trabajadores" />
@@ -24,11 +28,6 @@
 
     <item android:title="Communicate">
         <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/menu_share"
-                android:visible="false"/>
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
