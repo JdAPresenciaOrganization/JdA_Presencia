@@ -42,7 +42,6 @@ public class LoginPresenterImpl implements LoginPresenter {
                     userType = getUserList().get(i).getRol();
                     mLoginView.loginSuccess(sessionUserId, userType);
                     userFound = 1;
-                    sessionUserId = getUserList().get(i).getIdU();
                 }
             }
             if (userFound != 1){
