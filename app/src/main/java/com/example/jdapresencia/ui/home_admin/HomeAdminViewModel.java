@@ -1,16 +1,16 @@
-package com.example.jdapresencia.ui.share;
+package com.example.jdapresencia.ui.home_admin;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class ShareViewModel extends ViewModel {
+public class HomeAdminViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public ShareViewModel() {
+    public HomeAdminViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is share fragment");
+        mText.setValue("This is HOME ADMIN fragment");
     }
 
     public LiveData<String> getText() {

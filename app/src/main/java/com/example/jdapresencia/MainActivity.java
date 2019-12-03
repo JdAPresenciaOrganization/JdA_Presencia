@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavInflater;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -27,6 +29,7 @@ import android.view.Menu;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
+    boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +50,12 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gestionar_trabajadores, R.id.nav_buscador_trabajadores,
-                R.id.nav_mis_registros, R.id.nav_share, R.id.nav_send)
+                R.id.nav_home, R.id.nav_home_admin,
+                R.id.nav_gestionar_trabajadores, R.id.nav_buscador_trabajadores,
+                R.id.nav_mis_registros, R.id.nav_send)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-        NavigationUI.setupWithNavController(navigationView, navController);
 
         //Se muestra el navigation diferente segun el tipo de usuario
         String userType = getIntent().getStringExtra("rol_key");
@@ -66,10 +68,32 @@ public class MainActivity extends AppCompatActivity {
         edt.putString("sessionUserId_key", idSession);
         edt.commit();
 
-        Menu nav_Menu = navigationView.getMenu();
+        /*******************************************************/
+        /*Set start destination desde código java en vez de xml*/
+        /*******************************************************/
+        NavInflater navInflater = navController.getNavInflater();
+        NavGraph graph = navInflater.inflate(R.navigation.mobile_navigation);
+
         if (userType.equals("admin")){
+            isAdmin = true;
+            graph.setStartDestination(R.id.nav_home_admin);
+        } else {
+            graph.setStartDestination(R.id.nav_home);
+        }
+
+        navController.setGraph(graph);
+        /*******************************************************/
+
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+        Menu nav_Menu = navigationView.getMenu();
+
+        //Esconde algunas opciones del menú dependiendo del tipo de usuario
+        if (isAdmin){
+            nav_Menu.findItem(R.id.nav_home).setVisible(false);
             nav_Menu.findItem(R.id.nav_mis_registros).setVisible(false);
         } else {
+            nav_Menu.findItem(R.id.nav_home_admin).setVisible(false);
             nav_Menu.findItem(R.id.nav_gestionar_trabajadores).setVisible(false);
             nav_Menu.findItem(R.id.nav_buscador_trabajadores).setVisible(false);
         }
