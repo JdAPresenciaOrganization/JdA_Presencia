@@ -39,7 +39,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         recyclerViewUser.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos","todos"));
+        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos los usuarios", "todo"));
         recyclerViewUser.setAdapter(mAdapter);
 
 

@@ -53,12 +53,10 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
 
         try {
-
-            FileInputStream filein = new FileInputStream(file);
-            ObjectInputStream dataIN = new ObjectInputStream(filein);
-            allusers = (ArrayList<User>) dataIN.readObject();
-
-             for(int i = 0;i < allusers.size(); i++) {
+            String FILE_NAME = "/usersFile.dat";
+            File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
+            User usuario = (User) entrada.readObject();
 
                  switch (campo) {
                      case "idU":
@@ -81,14 +79,36 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
                  }
              }
 
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
+                switch (campo) {
+                    case "idU":
+                        if (usuario.getIdU().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "rol":
+                        if (usuario.getRol().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "username":
+                        if (usuario.getUsername().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    default:
+                        usersArray.add(usuario);
+                }
+
+                usuario = (User) entrada.readObject();
+
+            }
+            entrada.close();
+        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException e) {
             e.printStackTrace();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (IOException ignored) {
+
         }
 
         return customUsersArray;

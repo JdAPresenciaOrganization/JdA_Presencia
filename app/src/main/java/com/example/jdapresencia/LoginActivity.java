@@ -109,10 +109,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                     en la aplicación se podrán añadir nuevos trabajadores */
                 User user1 = new User("1", "admin", "super", "1234");
                 User user2 = new User("2", "admin", "admin", "1234");
-                User user3 = new User("3", "trabajador", "worker", "test");
+                User user3 = new User("3", "trabajador", "worker", "1234");
 
-                FileOutputStream fileout = new FileOutputStream(file);
-                ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+                ObjectOutputStream dataOS = new ObjectOutputStream(new FileOutputStream(file));
 
                 userListFile.add(user1);
                 userListFile.add(user2);
