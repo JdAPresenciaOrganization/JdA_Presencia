@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +43,8 @@ public class BuscadorTrabajadoresFragment extends Fragment {
         UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos los usuarios", "todo"));
         recyclerViewUser.setAdapter(mAdapter);
 
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
+        recyclerViewUser.addItemDecoration(dividerItemDecoration);
 
 
         //BOTON
@@ -58,6 +61,9 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
                 UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("username", string));
                 recyclerViewUser.setAdapter(mAdapter);
+
+                DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
+                recyclerViewUser.addItemDecoration(dividerItemDecoration);
 
             }
         });

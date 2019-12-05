@@ -46,11 +46,7 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
     public ArrayList<User> getUsersBy( String campo, String valor) {
 
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-        ArrayList<User> allusers = new ArrayList<>();
-        ArrayList<User> customUsersArray = new ArrayList<>();
-
-
+        ArrayList<User> usersArray = new ArrayList<>();
 
         try {
             String FILE_NAME = "/usersFile.dat";
@@ -58,26 +54,7 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
             ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
             User usuario = (User) entrada.readObject();
 
-                 switch (campo) {
-                     case "idU":
-                         if (allusers.get(i).getIdU().equals(valor)) {
-                             customUsersArray.add(allusers.get(i));
-                         }
-                         break;
-                     case "rol":
-                         if (allusers.get(i).getRol().equals(valor)) {
-                             customUsersArray.add(allusers.get(i));
-                         }
-                         break;
-                     case "username":
-                         if (allusers.get(i).getUsername().equals(valor)) {
-                             customUsersArray.add(allusers.get(i));
-                         }
-                         break;
-                     default:
-                         customUsersArray = allusers;
-                 }
-             }
+            while (usuario!=null) {
 
                 switch (campo) {
                     case "idU":
@@ -111,7 +88,7 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
         }
 
-        return customUsersArray;
+        return usersArray;
     };
 
     //public LiveData<String> getText() {
