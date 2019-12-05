@@ -12,8 +12,11 @@ import com.example.jdapresencia.model.User;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class BuscadorTrabajadoresViewModel extends ViewModel {
@@ -42,16 +45,11 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
         try {
             String FILE_NAME = "/usersFile.dat";
-
             File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-            FileInputStream filein = new FileInputStream(file);
-            ObjectInputStream entrada = new ObjectInputStream(filein);
-
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
             User usuario = (User) entrada.readObject();
 
             while (usuario!=null) {
-
-                Log.e("test", usuario.getUsername());
 
                 switch (campo) {
                     case "idU":
@@ -69,14 +67,20 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
                             usersArray.add(usuario);
                         }
                         break;
+                    default:
+                        usersArray.add(usuario);
                 }
 
                 usuario = (User) entrada.readObject();
 
             }
             entrada.close();
-        } catch (IndexOutOfBoundsException | NullPointerException | IOException | ClassNotFoundException e) {
+        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException ignored) {
+
         }
 
         return usersArray;
