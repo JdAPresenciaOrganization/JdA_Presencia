@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content">
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:background="?attr/selectableItemBackground">
 
     <TextView
         android:id="@+id/view_holder_uid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
+        android:layout_centerVertical="true"
         android:text="uid"/>
 
     <TextView
@@ -15,6 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@id/view_holder_uid"
+        android:layout_centerVertical="true"
         android:text="rol"/>
 
     <TextView
@@ -23,6 +25,17 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_toRightOf="@id/view_holder_rol"
+        android:layout_centerVertical="true"
         android:text="username" />
+
+    <Button
+        android:id="@+id/view_holder_boton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"
+        android:text="@string/boton_ver_registros"
+        android:visibility="invisible"/>
+
 
 </RelativeLayout>
