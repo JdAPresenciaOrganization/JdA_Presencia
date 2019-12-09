@@ -110,12 +110,18 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 User user1 = new User("1", "admin", "super", "1234");
                 User user2 = new User("2", "admin", "admin", "1234");
                 User user3 = new User("3", "trabajador", "worker", "1234");
+                User user4 = new User("4", "trabajador", "worker2", "1234");
+                User user5 = new User("5", "trabajador", "worker3", "1234");
+
+
 
                 ObjectOutputStream dataOS = new ObjectOutputStream(new FileOutputStream(file));
 
                 userListFile.add(user1);
                 userListFile.add(user2);
                 userListFile.add(user3);
+                userListFile.add(user4);
+                userListFile.add(user5);
 
                 dataOS.writeObject(userListFile);
                 dataOS.close();

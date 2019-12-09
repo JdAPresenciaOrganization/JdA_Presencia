@@ -1,15 +1,18 @@
 package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.User;
+import com.example.jdapresencia.ui.buscador_trabajadores.registros_trabajador.Registros_trabajador;
 
 import java.util.ArrayList;
 
@@ -38,16 +42,22 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         final EditText query = root.findViewById(R.id.query);
 
+        //Cargamos RecyclerView de todos los usuarios en cuanto entremos a este fragment
+
         recyclerViewUser.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos los usuarios", "todo"));
-        recyclerViewUser.setAdapter(mAdapter);
+        UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("todos los usuarios", "todos"), new RecyclerViewOnItemClickListener() {
+            @Override
+            public void onClick(String uid_user) {
+                Toast.makeText(getContext(), uid_user, Toast.LENGTH_SHORT).show();
+            }
+        });        recyclerViewUser.setAdapter(mAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
         recyclerViewUser.addItemDecoration(dividerItemDecoration);
 
 
-        //BOTON
+        //BOTON BUSCAR
 
         Button boton_buscar = root.findViewById(R.id.boton_buscar);
 
@@ -59,11 +69,17 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
                 recyclerViewUser.setLayoutManager(new LinearLayoutManager(getContext()));
 
-                UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("username", string));
+                UserAdapter mAdapter = new UserAdapter(buscadorTrabajadoresViewModel.getUsersBy("username", string), new RecyclerViewOnItemClickListener() {
+                    @Override
+                    public void onClick(String uid_user) {
+                        Toast.makeText(getContext(), uid_user, Toast.LENGTH_SHORT).show();
+                    }
+                });
                 recyclerViewUser.setAdapter(mAdapter);
 
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
                 recyclerViewUser.addItemDecoration(dividerItemDecoration);
+
 
             }
         });
@@ -81,9 +97,12 @@ public class BuscadorTrabajadoresFragment extends Fragment {
     public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         private ArrayList<User> usersList;
+        private RecyclerViewOnItemClickListener listener;
+        private Button boton_registros;
 
-        public UserAdapter(ArrayList<User> usersList) {
+        public UserAdapter(@NonNull ArrayList<User> usersList, @NonNull RecyclerViewOnItemClickListener listener) {
             this.usersList = usersList;
+            this.listener = listener;
         }
 
         @Override
@@ -104,6 +123,13 @@ public class BuscadorTrabajadoresFragment extends Fragment {
             holder.uid.setText(uid);
             holder.username.setText(username);
             holder.rol.setText(rol);
+            holder.bind(uid, listener);
+            if (rol.equals("trabajador")) {
+                boton_registros = (Button) holder.itemView.findViewById(R.id.view_holder_boton);
+                boton_registros.setVisibility(View.VISIBLE);
+            }
+
+
         }
 
         public int getItemCount() {
@@ -114,11 +140,41 @@ public class BuscadorTrabajadoresFragment extends Fragment {
             private TextView uid;
             private TextView username;
             private TextView rol;
+            private Button boton_ver_registros;
             public ViewHolder(View v) {
                 super(v);
                 uid = (TextView) v.findViewById(R.id.view_holder_uid);
                 username = (TextView) v.findViewById(R.id.view_holder_username);
                 rol = (TextView) v.findViewById(R.id.view_holder_rol);
+                boton_ver_registros = (Button) v.findViewById(R.id.view_holder_boton);
+                boton_ver_registros.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Registros_trabajador fragment = new Registros_trabajador();
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment,fragment);
+                        ft.addToBackStack(null);
+                        ft.commit();
+
+                    }
+                });
+
+                ;
+
+
+
+            }
+
+            public void bind(final String uid_user, final RecyclerViewOnItemClickListener listener) {
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        listener.onClick(uid_user);
+
+                    }
+
+                });
             }
         }
     }
