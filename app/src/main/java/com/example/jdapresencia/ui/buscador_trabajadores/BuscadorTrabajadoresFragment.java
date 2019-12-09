@@ -1,7 +1,6 @@
 package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.User;
-import com.example.jdapresencia.ui.buscador_trabajadores.registros_trabajador.Registros_trabajador;
+import com.example.jdapresencia.ui.buscador_trabajadores.registros_trabajador.RegistrosTrabajadorFragment;
 
 import java.util.ArrayList;
 
@@ -150,7 +149,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 boton_ver_registros.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Registros_trabajador fragment = new Registros_trabajador();
+                        RegistrosTrabajadorFragment fragment = new RegistrosTrabajadorFragment();
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         ft.replace(R.id.nav_host_fragment,fragment);
                         ft.addToBackStack(null);
