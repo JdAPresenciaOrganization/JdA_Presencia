@@ -1,6 +1,8 @@
 package com.example.jdapresencia.model;
 
-public class Registro {
+import java.io.Serializable;
+
+public class Registro implements Serializable {
 
     String idR, fecha, horaEntrada, horaSalida, id_trabajador;
 
