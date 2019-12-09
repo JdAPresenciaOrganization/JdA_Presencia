@@ -17,6 +17,8 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
 
+import java.io.IOException;
+
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -25,10 +27,9 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        //Captura el id del usuario logueado enviado del MainActivity
         SharedPreferences pref = getActivity().getPreferences(getActivity().MODE_PRIVATE);
-        String idSession = pref.getString("sessionUserId_key", "");
-
-        Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ id sesion usuario", idSession);
+        final String idSession = pref.getString("sessionUserId_key", "");
 
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
@@ -41,14 +42,22 @@ public class HomeFragment extends Fragment {
         bCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.userCheckIn();
+                try {
+                    homeViewModel.userCheckIn(idSession);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         bCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.userCheckOut();
+                try {
+                    homeViewModel.userCheckOut(idSession);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
