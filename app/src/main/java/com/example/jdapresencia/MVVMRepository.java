@@ -84,12 +84,16 @@ public class MVVMRepository {
             /* Se crea guarda en el fichero por primera vez el registro,
             un ArrayList con id registro 1 y la fecha actual con la hora del check in */
             ArrayList<Registro> userRegisterFile = new ArrayList<>();
-            Registro registro1 = new Registro("1", "08/12/2019", "16:00:00", "18:00:00", idSession);
+            Registro registro1 = new Registro("1", "05/12/2019", "10:00:00", "18:00:00", idSession);
+            Registro registro2 = new Registro("2", "06/12/2019", "10:10:00", "18:30:00", idSession);
+            Registro registro3 = new Registro("3", "09/12/2019", "10:20:00", "19:00:00", idSession);
 
             FileOutputStream fileout = new FileOutputStream(file);
             ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
 
             userRegisterFile.add(registro1);
+            userRegisterFile.add(registro2);
+            userRegisterFile.add(registro3);
 
             dataOS.writeObject(userRegisterFile);
             dataOS.close();
