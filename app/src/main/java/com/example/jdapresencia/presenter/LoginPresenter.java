@@ -7,5 +7,5 @@ import java.util.ArrayList;
 public interface LoginPresenter {
 
     void checkLogin(String user, String pass);
-
+    ArrayList<User> getUserList();
 }
