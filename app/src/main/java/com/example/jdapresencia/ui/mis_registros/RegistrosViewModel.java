@@ -15,7 +15,7 @@ public class RegistrosViewModel extends ViewModel {
 
     public RegistrosViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is MIS REGISTROS fragment");
+        mText.setValue("Mis registros");
     }
 
     public LiveData<String> getText() {

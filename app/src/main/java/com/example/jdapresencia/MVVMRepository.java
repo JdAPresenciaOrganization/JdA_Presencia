@@ -1,7 +1,6 @@
 package com.example.jdapresencia;
 
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.jdapresencia.model.Registro;
@@ -14,8 +13,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class MVVMRepository {
@@ -148,6 +152,14 @@ public class MVVMRepository {
         Date date = new Date();
 
         return dateFormat.format(date);
+    }
+
+    public static String spanishDate(){
+        String output = ZonedDateTime.now(ZoneId.of("Europe/Madrid"))
+                        .format(DateTimeFormatter.ofLocalizedDate (FormatStyle.FULL)
+                                .withLocale (new Locale("es" , "ES"))
+                        );
+        return output;
     }
 
     /**
