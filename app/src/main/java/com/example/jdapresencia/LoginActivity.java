@@ -100,9 +100,9 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
             File file = new File(context.getFilesDir().getPath()+FILE_NAME);
 
             if(!file.exists()){
-                /* Creación de arrayList con un admin y un trabajador
+                /* Creación de tres objetos User (2 admins y un trabajador)
                    que se guardarán en un fichero serializado */
-                ArrayList<User> userListFile = new ArrayList<>();
+
 
                 /* De momento el administrador de la aplicación usará este usuario, no se podrán
                    crear más administradores (de momento), el trabajador es para testear,
@@ -111,14 +111,12 @@ public class LoginActivity extends AppCompatActivity implements LoginView {
                 User user2 = new User("2", "admin", "admin", "1234");
                 User user3 = new User("3", "trabajador", "worker", "1234");
 
-                FileOutputStream fileout = new FileOutputStream(file);
-                ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+                ObjectOutputStream dataOS = new ObjectOutputStream(new FileOutputStream(file));
 
-                userListFile.add(user1);
-                userListFile.add(user2);
-                userListFile.add(user3);
+                dataOS.writeObject(user1);
+                dataOS.writeObject(user2);
+                dataOS.writeObject(user3);
 
-                dataOS.writeObject(userListFile);
                 dataOS.close();
             }
         } catch (IOException e) {
