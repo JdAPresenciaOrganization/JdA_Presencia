@@ -7,11 +7,16 @@ import com.example.jdapresencia.LoginActivity;
 import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.view.LoginView;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+
+import static com.example.jdapresencia.LoginActivity.FILE_NAME;
+import static com.example.jdapresencia.LoginActivity.getAppContext;
 
 public class LoginPresenterImpl implements LoginPresenter {
 
@@ -25,59 +30,41 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void checkLogin(String user, String pass) {
+
+        File file = new File(getAppContext().getFilesDir().getPath() + FILE_NAME);
+
         String userType, sessionUserId;
-        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)){
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             mLoginView.loginValidations();
         } else {
-            for (int i = 0; i < getUserList().size(); i++){
-                if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
-                        && getUserList().get(i).getRol().equals("admin")) {
-                    sessionUserId = getUserList().get(i).getIdU();
-                    userType = getUserList().get(i).getRol();
-                    mLoginView.loginSuccessAdmin(sessionUserId, userType);
-                    userFound = 1;
-                } else if (user.equals(getUserList().get(i).getUsername()) && pass.equals(getUserList().get(i).getPassword())
-                        && getUserList().get(i).getRol().equals("trabajador")){
-                    sessionUserId = getUserList().get(i).getIdU();
-                    userType = getUserList().get(i).getRol();
-                    mLoginView.loginSuccess(sessionUserId, userType);
-                    userFound = 1;
+
+            try {
+                ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
+
+                User usuario = (User) entrada.readObject();
+
+                while (usuario != null) {
+                    if (user.equals(usuario.getUsername()) && pass.equals(usuario.getPassword())) {
+                        sessionUserId = usuario.getIdU();
+                        userType = usuario.getRol();
+                        if (userType.equals("admin")) {
+                            mLoginView.loginSuccessAdmin(sessionUserId, userType);
+                            break;
+                        } else if (userType.equals("trabajador")) {
+                            mLoginView.loginSuccess(sessionUserId, userType);
+                            break;
+                        }
+                    }
+
+                    usuario = (User) entrada.readObject();
                 }
-            }
-            if (userFound != 1){
+            } catch (EOFException e) {
                 mLoginView.loginError();
+            } catch (ClassNotFoundException | IOException e) {
+                e.printStackTrace();
             }
+
         }
-    }
-
-    @Override
-    public ArrayList<User> getUserList() {
-        Context context = LoginActivity.getAppContext();
-        ArrayList<User> userList = new ArrayList<>();
-        try {
-            File file = new File(context.getFilesDir().getPath() + LoginActivity.FILE_NAME);
-
-            FileInputStream filein = new FileInputStream(file);
-            ObjectInputStream dataIS = new ObjectInputStream(filein);
-
-            for (User userFromFileList : (ArrayList<User>) dataIS.readObject()) {
-                userList.add(userFromFileList);
-            }
-            /*
-            User user = (User) dataIS.readObject();
-
-            while (user!=null) {
-                userList.add(user);
-                user = (User) dataIS.readObject();
-            }
-             */
-
-            dataIS.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException t) {
-            t.printStackTrace();
-        }
-        return userList;
     }
 }
+
