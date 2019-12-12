@@ -1,10 +1,13 @@
 package com.example.jdapresencia;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.jdapresencia.model.Registro;
+import com.example.jdapresencia.model.User;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -38,7 +41,7 @@ public class MVVMRepository {
         return srepository;
     }
 
-    /******** HOME VIEW MODEL METHODS ********/
+    /******** CHECK IN/OUT METHODS ********/
 
     public static void userCheckIn(String idSession) throws IOException {
         //Se crea un fichero por cada usuario utilizando el id del usuario
@@ -55,7 +58,7 @@ public class MVVMRepository {
             int idRegistroSiguiente = 0;
             String diaUltimoRegistroAUX = "";
 
-            for (int i = 0; i < getUserRegisterFile(idSession).size(); i++) {
+            for (int i = 0; i < getRegisters(idSession).size(); i++) {
                 /*
                 Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id Registro", getUserRegisterFile(idSession).get(i).getIdR());
                 Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id FECHA", getUserRegisterFile(idSession).get(i).getFecha());
@@ -63,9 +66,9 @@ public class MVVMRepository {
                 Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id SALIDA", getUserRegisterFile(idSession).get(i).getHoraSalida());
                 */
 
-                userRegisterFileAppend.add(getUserRegisterFile(idSession).get(i));
-                idRegistroSiguiente = Integer.parseInt(getUserRegisterFile(idSession).get(i).getIdR());
-                diaUltimoRegistroAUX = getUserRegisterFile(idSession).get(i).getFecha();
+                userRegisterFileAppend.add(getRegisters(idSession).get(i));
+                idRegistroSiguiente = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
+                diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
             }
 
             //Si la fecha del último registro no es igual que la actual es que no se ha hecho check in
@@ -116,12 +119,12 @@ public class MVVMRepository {
         String diaUltimoRegistroAUX = "";
         boolean lastRegister = false;
 
-        for (int i = 0; i < getUserRegisterFile(idSession).size(); i++) {
-            userRegisterFileAppend.add(getUserRegisterFile(idSession).get(i));
-            idRegistroActual = Integer.parseInt(getUserRegisterFile(idSession).get(i).getIdR());
-            diaUltimoRegistroAUX = getUserRegisterFile(idSession).get(i).getFecha();
+        for (int i = 0; i < getRegisters(idSession).size(); i++) {
+            userRegisterFileAppend.add(getRegisters(idSession).get(i));
+            idRegistroActual = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
+            diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
 
-            if (i == getUserRegisterFile(idSession).size() - 1) {
+            if (i == getRegisters(idSession).size() - 1) {
                 lastRegister = true;
             }
         }
@@ -142,10 +145,15 @@ public class MVVMRepository {
         }
     }
 
+    /******** FIN CHECK IN/OUT METHODS ********/
+
+
+    /******** DATE METHODS ********/
     /**
      * Devuelve la fecha en formato dd/MM/yyyy HH:mm:ss
      * @return
      */
+
     public static String fechaActualDiaHora(){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+1"));
@@ -186,28 +194,121 @@ public class MVVMRepository {
         return hora;
     }
 
-    public static ArrayList<Registro> getUserRegisterFile(String idSession){
-        String FILE_NAME = "/"+idSession+".dat";
-        ArrayList<Registro> userRegisterList = new ArrayList<>();
+    public static String RestDates(String firstDate, String secondDate) {
+
+        //Convertimos horas, minutos y segundos de la primera hora a segundos
+        int firstDateInSeconds_hours = Integer.parseInt(firstDate.substring(0,2))*3600;
+        int firstDateInSeconds_minutes = Integer.parseInt(firstDate.substring(3,5))*60;
+        int firstDateInSeconds_seconds = Integer.parseInt(firstDate.substring(6,8));
+
+        //Convertimos horas, minutos y segundos de la segunda hora a segundos
+        int secondDateInSeconds_hours = Integer.parseInt(secondDate.substring(0,2))*3600;
+        int secondDateInSeconds_minutes = Integer.parseInt(secondDate.substring(3,5))*60;
+        int secondDateInSeconds_seconds = Integer.parseInt(secondDate.substring(6,8));
+
+        //Sumamos dichos segundos en una variable para luego poder restarlas
+        int firstDateInSeconds = firstDateInSeconds_hours + firstDateInSeconds_minutes + firstDateInSeconds_seconds;
+        int secondDateInSeconds = secondDateInSeconds_hours + secondDateInSeconds_minutes + secondDateInSeconds_seconds;
+
+        //Restamos las dos horas para obtener los segundos de diferencia y lo convertimos al formato de fecha inicial
+        int resultInSeconds = secondDateInSeconds - firstDateInSeconds;
+        String finalFormatedTime = fromSecondsToTime(resultInSeconds);
+
+        return finalFormatedTime;
+    }
+
+    public static String fromSecondsToTime(int segundos) {
+
+        //Funcion que recibe segundos en un entero y devuelve dichos segundos en en el siguiente formato HH:MM:SS
+
+        //Primero calculamos las horas, minutos y segundos que equivalen a la cantidad de segundos
+        String hours = format2numbers(Integer.toString(segundos/3600));
+        segundos = segundos%3600;
+        String minutes = format2numbers(Integer.toString(segundos/60));
+        String seconds = format2numbers(Integer.toString(segundos%60));
+
+        return hours + ":" + minutes + ":" + seconds;
+
+    }
+    public static String format2numbers(String number) {
+        if (number.length()<2) {
+            return "0" + number;
+        } else {
+            return number;
+        }
+    }
+    /******** FIN DATE METHODS ********/
+
+    /******** USER METHODS ********/
+
+    public static ArrayList<User> getUsersBy(String campo, String valor) {
+
+        ArrayList<User> usersArray = new ArrayList<>();
+
         try {
+            String FILE_NAME = "/usersFile.dat";
             File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
+            User usuario = (User) entrada.readObject();
 
-            FileInputStream filein = new FileInputStream(file);
-            ObjectInputStream dataIS = new ObjectInputStream(filein);
+            while (usuario!=null) {
 
-            for (Registro userRegisterFromFileList : (ArrayList<Registro>) dataIS.readObject()) {
-                userRegisterList.add(userRegisterFromFileList);
+                switch (campo) {
+                    case "idU":
+                        if (usuario.getIdU().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "rol":
+                        if (usuario.getRol().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    case "username":
+                        if (usuario.getUsername().equals(valor)) {
+                            usersArray.add(usuario);
+                        }
+                        break;
+                    default:
+                        usersArray.add(usuario);
+                }
+
+                usuario = (User) entrada.readObject();
+
             }
-            dataIS.close();
+            entrada.close();
+        } catch (EOFException ignored) {
+        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return usersArray;
+    };
+
+
+    /******** FIN USER METHODS ********/
+
+    /******** USER'S REGISTERS METHODS ********/
+
+    public static ArrayList<Registro> getRegisters(String uid) {
+        ArrayList<Registro> registros = new ArrayList<>();
+        String FILE_NAME = "/" + uid + ".dat";
+
+        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+
+        try {
+            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
+            registros = (ArrayList<Registro>) entrada.readObject();
+            entrada.close();
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return userRegisterList;
+
+
+        return registros;
     }
 
-    /******** FIN HOME VIEW MODEL METHODS ********/
 
-    /******** BUSCADOR TRABAJADORES VIEW MODEL METHODS ********/
-
-    /******** BUSCADOR TRABAJADORES VIEW MODEL METHODS ********/
+    /******** FIN USER'S REGISTERS METHODS ********/
 }

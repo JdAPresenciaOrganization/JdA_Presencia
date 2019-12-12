@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.jdapresencia.MVVMRepository;
 import com.example.jdapresencia.model.Registro;
 
 import java.io.EOFException;
@@ -17,30 +18,13 @@ import java.util.ArrayList;
 
 public class RegistrosTrabajadorViewModel extends ViewModel {
 
-    private Context context;
-
-    public void pasarContexto(Context context) {
-        this.context = context;
-
-    }
 
     public ArrayList<Registro> getRegisters(String uid) {
-        ArrayList<Registro> registros = new ArrayList<>();
-        String FILE_NAME = "/" + uid + ".dat";
+       return MVVMRepository.getRegisters(uid);
+    }
 
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-
-        try {
-            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
-            registros = (ArrayList<Registro>) entrada.readObject();
-            entrada.close();
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return registros;
+    public String RestDates(String fecha1, String fecha2) {
+        return MVVMRepository.RestDates(fecha1, fecha2);
     }
 
 }

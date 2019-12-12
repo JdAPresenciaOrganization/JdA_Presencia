@@ -35,10 +35,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 ViewModelProviders.of(this).get(BuscadorTrabajadoresViewModel.class);
         View root = inflater.inflate(R.layout.fragment_buscador_trabajadores, container, false);
 
-        buscadorTrabajadoresViewModel.pasarContexto(getContext());
-
         final RecyclerView recyclerViewUser = (RecyclerView) root.findViewById(R.id.recyclerViewUserFinder);
-
         final EditText query = root.findViewById(R.id.query);
 
         //Cargamos RecyclerView de todos los usuarios en cuanto entremos a este fragment
@@ -80,8 +77,6 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
                 DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
                 recyclerViewUser.addItemDecoration(dividerItemDecoration);
-
-
             }
         });
 
@@ -111,10 +106,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_buscador_trabajadores, parent, false);
             ViewHolder viewHolder = new ViewHolder(v);
             return viewHolder;
-
         }
-
-
 
         public void onBindViewHolder(ViewHolder holder, int position) {
             String uid = usersList.get(position).getIdU();
@@ -129,8 +121,6 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 boton_registros = (Button) holder.itemView.findViewById(R.id.view_holder_boton);
                 boton_registros.setVisibility(View.VISIBLE);
             }
-
-
         }
 
         public int getItemCount() {
@@ -159,14 +149,8 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                         ft.replace(R.id.nav_host_fragment,fragment);
                         ft.addToBackStack(null);
                         ft.commit();
-
                     }
                 });
-
-                ;
-
-
-
             }
 
             public void bind(final String uid_user, final RecyclerViewOnItemClickListener listener) {

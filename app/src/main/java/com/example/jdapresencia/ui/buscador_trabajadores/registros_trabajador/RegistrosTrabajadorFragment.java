@@ -32,8 +32,6 @@ public class RegistrosTrabajadorFragment extends Fragment {
                 ViewModelProviders.of(this).get(RegistrosTrabajadorViewModel.class);
         View root = inflater.inflate(R.layout.fragment_registros_trabajador, container, false);
 
-        registrosTrabajadorViewModel.pasarContexto(getContext());
-
         Bundle uid_recuperado = getArguments();
         String uid_empleado = uid_recuperado.getString("uid");
 
@@ -87,7 +85,7 @@ public class RegistrosTrabajadorFragment extends Fragment {
             holder.fecha.setText(fecha);
             holder.entrada.setText(entrada);
             holder.salida.setText(salida);
-            holder.duracion.setText("Duración: ");
+            holder.duracion.setText(registrosTrabajadorViewModel.RestDates(entrada, salida));
 
         }
 
