@@ -50,7 +50,9 @@ public class BuscadorTrabajadoresFragment extends Fragment {
             public void onClick(String uid_user) {
                 Toast.makeText(getContext(), uid_user, Toast.LENGTH_SHORT).show();
             }
-        });        recyclerViewUser.setAdapter(mAdapter);
+        });
+
+        recyclerViewUser.setAdapter(mAdapter);
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewUser.getContext(),((LinearLayoutManager) recyclerViewUser.getLayoutManager()).getOrientation());
         recyclerViewUser.addItemDecoration(dividerItemDecoration);
@@ -106,7 +108,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder (ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.buscador_trabajadores_view_holder, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_buscador_trabajadores, parent, false);
             ViewHolder viewHolder = new ViewHolder(v);
             return viewHolder;
 
@@ -136,6 +138,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
+            private Bundle uid_para_fragment_registros = new Bundle();
             private TextView uid;
             private TextView username;
             private TextView rol;
@@ -149,7 +152,9 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 boton_ver_registros.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        uid_para_fragment_registros.putString("uid", usersList.get(getAdapterPosition()).getIdU());
                         RegistrosTrabajadorFragment fragment = new RegistrosTrabajadorFragment();
+                        fragment.setArguments(uid_para_fragment_registros);
                         FragmentTransaction ft = getFragmentManager().beginTransaction();
                         ft.replace(R.id.nav_host_fragment,fragment);
                         ft.addToBackStack(null);

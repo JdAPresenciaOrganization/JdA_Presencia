@@ -23,7 +23,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import static com.example.jdapresencia.LoginActivity.FILE_NAME;
 
 public class BuscadorTrabajadoresViewModel extends ViewModel {
 
