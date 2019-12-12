@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,14 +16,11 @@ import com.example.jdapresencia.model.User;
 import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.view.LoginView;
 
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+
 
 public class LoginActivity extends AppCompatActivity implements LoginView {
 

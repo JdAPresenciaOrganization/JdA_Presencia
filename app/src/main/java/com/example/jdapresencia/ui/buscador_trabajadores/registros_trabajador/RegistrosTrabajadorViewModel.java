@@ -29,10 +29,11 @@ public class RegistrosTrabajadorViewModel extends ViewModel {
         String FILE_NAME = "/" + uid + ".dat";
 
         File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+
         try {
             ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
             registros = (ArrayList<Registro>) entrada.readObject();
-
+            entrada.close();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

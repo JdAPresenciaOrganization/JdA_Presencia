@@ -14,13 +14,12 @@ import com.example.jdapresencia.model.User;
 import com.example.jdapresencia.presenter.LoginPresenter;
 
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 
@@ -28,15 +27,10 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
     private Context context;
 
-    //private MutableLiveData<String> mText;
-    private MutableLiveData<ArrayList<User>> ListaMutableAllUsers;
-
-    public BuscadorTrabajadoresViewModel() {
+    //public BuscadorTrabajadoresViewModel() {
         //mText = new MutableLiveData<>();
         //mText.setValue("Este es el buscador de trabajadores");
-
-
-    }
+    //}
 
     public void pasarContexto(Context context) {
         this.context = context;
@@ -79,12 +73,9 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
 
             }
             entrada.close();
-        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException e) {
+        } catch (EOFException ignored) {
+        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException | IOException e) {
             e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException ignored) {
-
         }
 
         return usersArray;

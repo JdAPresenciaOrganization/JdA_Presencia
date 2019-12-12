@@ -21,7 +21,6 @@ import static com.example.jdapresencia.LoginActivity.getAppContext;
 public class LoginPresenterImpl implements LoginPresenter {
 
     LoginView mLoginView;
-    int userFound = 0;
 
     //Constructor
     public LoginPresenterImpl(LoginView mLoginView) {
@@ -30,6 +29,12 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void checkLogin(String user, String pass) {
+
+        /*
+        Éste método recibe los parámetros introducidos por el usuario en la pantalla de login (username y password).
+        Primero busca en el fichero de usuarios una coincidencia, si la encuentra hace el login después de comprobar el rol,
+        en el caso de no encontrar coincidencias se llama al método loginError().
+         */
 
         File file = new File(getAppContext().getFilesDir().getPath() + FILE_NAME);
 
@@ -58,6 +63,7 @@ public class LoginPresenterImpl implements LoginPresenter {
 
                     usuario = (User) entrada.readObject();
                 }
+                entrada.close();
             } catch (EOFException e) {
                 mLoginView.loginError();
             } catch (ClassNotFoundException | IOException e) {

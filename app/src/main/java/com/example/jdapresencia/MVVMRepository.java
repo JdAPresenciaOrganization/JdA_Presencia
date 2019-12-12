@@ -199,13 +199,15 @@ public class MVVMRepository {
                 userRegisterList.add(userRegisterFromFileList);
             }
             dataIS.close();
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException t) {
-            t.printStackTrace();
         }
         return userRegisterList;
     }
 
     /******** FIN HOME VIEW MODEL METHODS ********/
+
+    /******** BUSCADOR TRABAJADORES VIEW MODEL METHODS ********/
+
+    /******** BUSCADOR TRABAJADORES VIEW MODEL METHODS ********/
 }
