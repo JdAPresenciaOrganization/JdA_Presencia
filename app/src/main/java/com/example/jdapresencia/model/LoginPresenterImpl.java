@@ -1,19 +1,15 @@
 package com.example.jdapresencia.model;
 
-import android.content.Context;
 import android.text.TextUtils;
 
-import com.example.jdapresencia.LoginActivity;
 import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.view.LoginView;
 
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.ArrayList;
 
 import static com.example.jdapresencia.LoginActivity.FILE_NAME;
 import static com.example.jdapresencia.LoginActivity.getAppContext;

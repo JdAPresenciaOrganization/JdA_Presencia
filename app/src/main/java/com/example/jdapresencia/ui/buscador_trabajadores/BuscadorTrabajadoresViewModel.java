@@ -1,33 +1,14 @@
 package com.example.jdapresencia.ui.buscador_trabajadores;
 
-import android.content.Context;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Log;
-
-import com.example.jdapresencia.LoginActivity;
-import com.example.jdapresencia.model.LoginPresenterImpl;
 import com.example.jdapresencia.model.User;
-import com.example.jdapresencia.presenter.LoginPresenter;
 import com.example.jdapresencia.MVVMRepository;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 
 public class BuscadorTrabajadoresViewModel extends ViewModel {
-
-
-
-
     //public BuscadorTrabajadoresViewModel() {
         //mText = new MutableLiveData<>();
         //mText.setValue("Este es el buscador de trabajadores");
