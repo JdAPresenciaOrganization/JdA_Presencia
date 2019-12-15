@@ -200,6 +200,10 @@ public class MVVMRepository {
 
     public static String RestDates(String firstDate, String secondDate) {
 
+        if (secondDate.length()==0) {
+            //Si la jornada está en progreso...
+            return "IN PROGRESS";
+        }
         //Convertimos horas, minutos y segundos de la primera hora a segundos
         int firstDateInSeconds_hours = Integer.parseInt(firstDate.substring(0,2))*3600;
         int firstDateInSeconds_minutes = Integer.parseInt(firstDate.substring(3,5))*60;
