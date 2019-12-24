@@ -12,7 +12,6 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static String FILE_NAME = "/usersFile.dat";
     private static Context mContext;
 
     //Variables
@@ -38,6 +37,11 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Se envia al MainActivity el id del usuario y su rol
+     * @param sessionUserId
+     * @param userType
+     */
     public static void loginSuccess(String sessionUserId, String userType) {
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtra("idSession_key", sessionUserId);

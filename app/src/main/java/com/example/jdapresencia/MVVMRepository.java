@@ -1,5 +1,6 @@
 package com.example.jdapresencia;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.jdapresencia.database.DBDesign;
 import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
@@ -61,19 +63,6 @@ public class MVVMRepository {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.rawQuery("Select * from user where username=? and password=?", new String[]{user, pass});
 
-            /*
-            if (cursor.getCount() > 0) {
-                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", String.valueOf(cursor.getString(2)));
-                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", String.valueOf(cursor.getColumnIndex("username")));
-
-                Toast.makeText(context, "User exists", Toast.LENGTH_SHORT).show();
-                //intent.putExtra("username_key", usu);
-                //intent.putExtra("password_key", pss);
-            } else {
-                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
-            }
-
-             */
             if (cursor.moveToFirst()){
                 do {
                     // Passing values
@@ -81,12 +70,6 @@ public class MVVMRepository {
                     String column2 = cursor.getString(1);
                     String column3 = cursor.getString(2);
                     String column4 = cursor.getString(3);
-                    // Do something Here with values
-
-                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column1);
-                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column2);
-                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column3);
-                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column4);
 
                     //Se pasa el id y el rol de usuario
                     LoginActivity.loginSuccess(column1, column2);
@@ -102,73 +85,42 @@ public class MVVMRepository {
     /******** CHECK IN/OUT METHODS ********/
 
     public static void userCheckIn(String idSession) throws IOException {
-        //Se crea un fichero por cada usuario utilizando el id del usuario
-        String FILE_NAME = "/"+idSession+".dat";
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
 
-        /* Si el fichero existe, se recorren los datos ya existentes en el fichero
-        para añadirle el último registro que se haga, sino, se crea el primer registro
-        del check in que tendrá id de registro 1 */
-        if (file.exists()) {
-            //ArrayList para guardar los datos de fichero y poder hacer un add luego
-            ArrayList<Registro> userRegisterFileAppend = new ArrayList<>();
-            //Variable auxiliar para guardar el id de los registros que se van recorriendo
-            int idRegistroSiguiente = 0;
-            String diaUltimoRegistroAUX = "";
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
+                new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
-            for (int i = 0; i < getRegisters(idSession).size(); i++) {
-                /*
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id Registro", getUserRegisterFile(idSession).get(i).getIdR());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id FECHA", getUserRegisterFile(idSession).get(i).getFecha());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id ENTRADA", getUserRegisterFile(idSession).get(i).getHoraEntrada());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id SALIDA", getUserRegisterFile(idSession).get(i).getHoraSalida());
-                */
+        if (cursor.moveToFirst()){
+            do {
+                // Passing values
+                String fecha = cursor.getString(1);
+                String hEntrada = cursor.getString(2);
+                String hSalida = cursor.getString(3);
+                String hTotales = cursor.getString(4);
+                String idU = cursor.getString(4);
 
-                userRegisterFileAppend.add(getRegisters(idSession).get(i));
-                idRegistroSiguiente = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
-                diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
-            }
-
-            //Si la fecha del último registro no es igual que la actual es que no se ha hecho check in
-            if ( !diaUltimoRegistroAUX.equals(getDiaActual(fechaActualDiaHora())) ) {
-                FileOutputStream fileout = new FileOutputStream(file);
-                ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
-
-                Registro registro2 = new Registro(Integer.toString(idRegistroSiguiente + 1), getDiaActual(fechaActualDiaHora()), getHoraActual(fechaActualDiaHora()), "", idSession);
-                userRegisterFileAppend.add(registro2);
-
-                dataOS.writeObject(userRegisterFileAppend);
-                dataOS.close();
-
-                Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "¡Ya has hecho check in hoy!",Toast.LENGTH_SHORT).show();
-            }
-
+                Toast.makeText(context, "¡Ya has hecho check in hoy!@@@@@@@@@@@@@@@@",Toast.LENGTH_SHORT).show();
+            } while(cursor.moveToNext());
         } else {
-            /* Se crea guarda en el fichero por primera vez el registro,
-            un ArrayList con id registro 1 y la fecha actual con la hora del check in */
-            ArrayList<Registro> userRegisterFile = new ArrayList<>();
-            Registro registro1 = new Registro("1", "09/12/2019", "10:20:00", "19:00:00", idSession);
-            Registro registro2 = new Registro("2", "10/12/2019", "10:00:00", "18:00:00", idSession);
-            Registro registro3 = new Registro("3", "11/12/2019", "10:10:00", "18:30:00", idSession);
-            Registro registro4 = new Registro("4", "12/12/2019", "10:00:00", "18:00:00", idSession);
-            Registro registro5 = new Registro("5", "13/12/2019", "10:10:00", "18:30:00", idSession);
+            ContentValues insertValues = new ContentValues();
+            insertValues.put(DBDesign.DBEntry.TR_C2_FECHA, getDiaActual(fechaActualDiaHora()));
+            insertValues.put(DBDesign.DBEntry.TR_C3_HORA_ENTRADA, getHoraActual(fechaActualDiaHora()));
+            insertValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, "");
+            insertValues.put(DBDesign.DBEntry.TR_C5_HORAS_DIA, "");
+            insertValues.put(DBDesign.DBEntry.TR_C6_ID_TRABAJADOR, idSession);
+            //Insert the new row, returning the primary key value of the new row
+            long rowInserted = db.insert(DBDesign.DBEntry.TABLE_REGISTRO, null, insertValues);
 
-            FileOutputStream fileout = new FileOutputStream(file);
-            ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
-
-            userRegisterFile.add(registro1);
-            userRegisterFile.add(registro2);
-            userRegisterFile.add(registro3);
-            userRegisterFile.add(registro4);
-            userRegisterFile.add(registro5);
-
-            dataOS.writeObject(userRegisterFile);
-            dataOS.close();
-
-            Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
+            if(rowInserted != -1) {
+                Toast.makeText(context, "Check in done@@@@@@@@@@@@@@@@",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(context, "Something wrong@@@@@@@@@@@@@@@@", Toast.LENGTH_SHORT).show();
+            }
         }
+        cursor.close();
+        db.close();
     }
 
     public static void userCheckOut(String idSession) throws IOException {
@@ -211,11 +163,11 @@ public class MVVMRepository {
 
 
     /******** DATE METHODS ********/
+
     /**
      * Devuelve la fecha en formato dd/MM/yyyy HH:mm:ss
      * @return
      */
-
     public static String fechaActualDiaHora(){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+1"));
