@@ -1,9 +1,13 @@
 package com.example.jdapresencia;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
@@ -28,17 +32,71 @@ import java.util.TimeZone;
 public class MVVMRepository {
 
     private static Context context;
+    private static SQLiteDatabase db;
     //Singleton
     private static MVVMRepository srepository;
 
     private MVVMRepository(Context context){
         this.context = context;
+        DBHelper dbHelper = new DBHelper(context);
+        db = dbHelper.getWritableDatabase();
     }
     public static MVVMRepository get(Context context){
         if (srepository == null){
             srepository = new MVVMRepository(context);
         }
         return srepository;
+    }
+
+    /**
+     * Login Activity
+     * @param user
+     * @param pass
+     */
+    public static void checkLogin(String user, String pass) {
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
+            Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
+        } else {
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=? and password=?", new String[]{user, pass});
+
+            /*
+            if (cursor.getCount() > 0) {
+                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", String.valueOf(cursor.getString(2)));
+                Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", String.valueOf(cursor.getColumnIndex("username")));
+
+                Toast.makeText(context, "User exists", Toast.LENGTH_SHORT).show();
+                //intent.putExtra("username_key", usu);
+                //intent.putExtra("password_key", pss);
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+
+             */
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String column1 = cursor.getString(0);
+                    String column2 = cursor.getString(1);
+                    String column3 = cursor.getString(2);
+                    String column4 = cursor.getString(3);
+                    // Do something Here with values
+
+                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column1);
+                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column2);
+                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column3);
+                    Log.i("@@@@@@@@@@@@@@@@@@@@@@@@@", column4);
+
+                    //Se pasa el id y el rol de usuario
+                    LoginActivity.loginSuccess(column1, column2);
+                } while(cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
     }
 
     /******** CHECK IN/OUT METHODS ********/
