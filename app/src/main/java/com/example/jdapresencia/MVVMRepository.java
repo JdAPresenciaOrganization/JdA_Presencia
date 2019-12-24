@@ -124,39 +124,34 @@ public class MVVMRepository {
     }
 
     public static void userCheckOut(String idSession) throws IOException {
-        String FILE_NAME = "/"+idSession+".dat";
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
 
-        //ArrayList para guardar los datos de fichero y poder hacer un add luego con la hora de salida
-        ArrayList<Registro> userRegisterFileAppend = new ArrayList<>();
-        int idRegistroActual = 0;
-        String diaUltimoRegistroAUX = "";
-        boolean lastRegister = false;
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
+                new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
-        for (int i = 0; i < getRegisters(idSession).size(); i++) {
-            userRegisterFileAppend.add(getRegisters(idSession).get(i));
-            idRegistroActual = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
-            diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
+        if (cursor.moveToFirst()){
+            do {
+                // Passing values
+                String idR = cursor.getString(0);
+                String fecha = cursor.getString(1);
+                String hEntrada = cursor.getString(2);
+                String hSalida = cursor.getString(3);
+                String hTotales = cursor.getString(4);
+                String idU = cursor.getString(4);
 
-            if (i == getRegisters(idSession).size() - 1) {
-                lastRegister = true;
-            }
-        }
+                //Update con la fecha de salida
+                ContentValues updateValues = new ContentValues();
+                updateValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, getHoraActual(fechaActualDiaHora()));
+                db.update(DBDesign.DBEntry.TABLE_REGISTRO, updateValues, "_id="+idR, null);
 
-        //Si la fecha del último registro es igual que la actual es que ya se ha hecho check in
-        if ( lastRegister && diaUltimoRegistroAUX.equals(getDiaActual(fechaActualDiaHora())) ) {
-            FileOutputStream fileout = new FileOutputStream(file);
-            ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
-
-            userRegisterFileAppend.get(idRegistroActual - 1).setHoraSalida(getHoraActual(fechaActualDiaHora()));
-
-            dataOS.writeObject(userRegisterFileAppend);
-            dataOS.close();
-
-            Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+            } while(cursor.moveToNext());
         } else {
             Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
         }
+        cursor.close();
+        db.close();
     }
 
     /******** FIN CHECK IN/OUT METHODS ********/
