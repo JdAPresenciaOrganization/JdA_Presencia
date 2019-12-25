@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/query"
+        android:id="@+id/input_buscador"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -27,7 +27,7 @@
         android:text="@string/boton_buscador"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/query"
+        app:layout_constraintStart_toEndOf="@+id/input_buscador"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.064" />
 
@@ -36,5 +36,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="120dp"
-        app:layout_constraintTop_toBottomOf="@+id/query" />
+        app:layout_constraintTop_toBottomOf="@+id/input_buscador" />
 </androidx.constraintlayout.widget.ConstraintLayout>

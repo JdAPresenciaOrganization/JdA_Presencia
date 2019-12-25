@@ -4,20 +4,21 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    String idU, rol, username, password;
+    int idU;
+    String rol, username, password;
 
-    public User(String idU, String rol, String username, String password) {
+    public User(int idU, String rol, String username, String password) {
         this.idU = idU;
         this.rol = rol;
         this.username = username;
         this.password = password;
     }
 
-    public String getIdU() {
+    public int getIdU() {
         return idU;
     }
 
-    public void setIdU(String idU) {
+    public void setIdU(int idU) {
         this.idU = idU;
     }
 

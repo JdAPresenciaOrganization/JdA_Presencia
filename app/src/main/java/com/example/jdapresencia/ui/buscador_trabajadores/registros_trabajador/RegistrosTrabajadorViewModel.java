@@ -9,11 +9,6 @@ import java.util.ArrayList;
 
 public class RegistrosTrabajadorViewModel extends ViewModel {
 
-
-    public ArrayList<Registro> getRegisters(String uid) {
-       return MVVMRepository.getRegisters(uid);
-    }
-
     public String RestDates(String fecha1, String fecha2) {
         return MVVMRepository.RestDates(fecha1, fecha2);
     }

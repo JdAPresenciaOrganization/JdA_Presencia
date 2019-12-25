@@ -38,7 +38,7 @@ public class RegistrosTrabajadorFragment extends Fragment {
         RecyclerView recyclerViewRegistros = (RecyclerView) root.findViewById(R.id.recyclerViewRegistros);
 
         recyclerViewRegistros.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerViewRegistros.setAdapter(new RegisterAdapter(registrosTrabajadorViewModel.getRegisters(uid_empleado)));
+        //recyclerViewRegistros.setAdapter(new RegisterAdapter(registrosTrabajadorViewModel.getRegisters(uid_empleado)));
 
         return root;
     }

@@ -256,76 +256,78 @@ public class MVVMRepository {
     }
     /******** FIN DATE METHODS ********/
 
-    /******** USER METHODS ********/
+    /******** BUSCADOR USER METHODS ********/
 
-    public static ArrayList<User> getUsersBy(String campo, String valor) {
+    /**
+     * Se muestran todos los usuarios si no se ha introducido nada,
+     * de lo contrario, buscará el trabajador por el username
+     * @param username
+     * @return
+     */
+    public static ArrayList<User> getUsersByUsername(String username) {
+        ArrayList<User> listUser = new ArrayList<>();
 
-        ArrayList<User> usersArray = new ArrayList<>();
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        try {
-            String FILE_NAME = "/usersFile.dat";
-            File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
-            User usuario = (User) entrada.readObject();
+        if (!username.equals("")) {
+            Cursor cursor = db.query(
+                    DBDesign.DBEntry.TABLE_USER,
+                    null,
+                    DBDesign.DBEntry.TU_C3_USERNAME + "=?",
+                    new String[]{username},
+                    null,
+                    null,
+                    null);
 
-            while (usuario!=null) {
-
-                switch (campo) {
-                    case "idU":
-                        if (usuario.getIdU().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    case "rol":
-                        if (usuario.getRol().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    case "username":
-                        if (usuario.getUsername().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    default:
-                        usersArray.add(usuario);
-                }
-
-                usuario = (User) entrada.readObject();
-
+            while (cursor.moveToNext()) {
+                User user = new User(
+                        cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                );
+                listUser.add(user);
             }
-            entrada.close();
-        } catch (EOFException ignored) {
-        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            cursor.close();
+            db.close();
+
+        } else {
+            Cursor cursor = db.query(
+                    DBDesign.DBEntry.TABLE_USER,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+
+            while (cursor.moveToNext()) {
+                User user = new User(
+                        cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                );
+                listUser.add(user);
+            }
+            cursor.close();
+            db.close();
         }
 
-        return usersArray;
-    };
-
-
-    /******** FIN USER METHODS ********/
-
-    /******** USER'S REGISTERS METHODS ********/
-
-    public static ArrayList<Registro> getRegisters(String uid) {
-        ArrayList<Registro> registros = new ArrayList<>();
-        String FILE_NAME = "/" + uid + ".dat";
-
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-
-        try {
-            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
-            registros = (ArrayList<Registro>) entrada.readObject();
-            entrada.close();
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-
-        return registros;
+        return listUser;
     }
 
+    /******** FIN BUSCADOR USER METHODS ********/
+
+    /******** MY REGISTERS METHODS ********/
+
+    /**
+     * Listado de registros donde el id es el del usuario en sesion,
+     * se muestran los registros en orden descendente
+     * @param idSession
+     * @return
+     */
     public static ArrayList<Registro> getListRegistros(String idSession) {
         ArrayList<Registro> listRegistros = new ArrayList<>();
 
@@ -353,6 +355,6 @@ public class MVVMRepository {
         db.close();
         return listRegistros;
     }
-    
-    /******** FIN USER'S REGISTERS METHODS ********/
+
+    /******** FIN MY REGISTERS METHODS ********/
 }

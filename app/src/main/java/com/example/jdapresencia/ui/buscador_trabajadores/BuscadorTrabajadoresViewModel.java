@@ -14,14 +14,9 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
         //mText.setValue("Este es el buscador de trabajadores");
     //}
 
-    //public void pasarContexto(Context context) {
-    //    this.context = context;
-    //    }
-
-    public ArrayList<User> getUsersBy( String campo, String valor) {
-
-        return MVVMRepository.getUsersBy(campo, valor);
-    };
+    public ArrayList<User> getUsersByUsername(String username) {
+        return MVVMRepository.getUsersByUsername(username);
+    }
 
     //public LiveData<String> getText() {
     //    return mText;
