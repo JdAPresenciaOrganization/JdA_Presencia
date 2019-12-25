@@ -84,7 +84,7 @@ public class MVVMRepository {
 
     /******** CHECK IN/OUT METHODS ********/
 
-    public static void userCheckIn(String idSession) throws IOException {
+    public static void userCheckIn(String idSession) {
 
         DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -98,9 +98,9 @@ public class MVVMRepository {
                 String hEntrada = cursor.getString(2);
                 String hSalida = cursor.getString(3);
                 String hTotales = cursor.getString(4);
-                String idU = cursor.getString(4);
+                String idU = cursor.getString(5);
 
-                Toast.makeText(context, "¡Ya has hecho check in hoy!@@@@@@@@@@@@@@@@",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "¡Ya has hecho check in hoy!",Toast.LENGTH_SHORT).show();
             } while(cursor.moveToNext());
         } else {
             ContentValues insertValues = new ContentValues();
@@ -113,17 +113,17 @@ public class MVVMRepository {
             long rowInserted = db.insert(DBDesign.DBEntry.TABLE_REGISTRO, null, insertValues);
 
             if(rowInserted != -1) {
-                Toast.makeText(context, "Check in done@@@@@@@@@@@@@@@@",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(context, "Something wrong@@@@@@@@@@@@@@@@", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
             }
         }
         cursor.close();
         db.close();
     }
 
-    public static void userCheckOut(String idSession) throws IOException {
+    public static void userCheckOut(String idSession) {
 
         DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -138,14 +138,19 @@ public class MVVMRepository {
                 String hEntrada = cursor.getString(2);
                 String hSalida = cursor.getString(3);
                 String hTotales = cursor.getString(4);
-                String idU = cursor.getString(4);
+                String idU = cursor.getString(5);
 
                 //Update con la fecha de salida
-                ContentValues updateValues = new ContentValues();
-                updateValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, getHoraActual(fechaActualDiaHora()));
-                db.update(DBDesign.DBEntry.TABLE_REGISTRO, updateValues, "_id="+idR, null);
+                if (hSalida.equals("")) {
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, getHoraActual(fechaActualDiaHora()));
+                    db.update(DBDesign.DBEntry.TABLE_REGISTRO, updateValues, "_id="+idR, null);
 
-                Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Registro del día ya finalizado",Toast.LENGTH_SHORT).show();
+                }
+
             } while(cursor.moveToNext());
         } else {
             Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
