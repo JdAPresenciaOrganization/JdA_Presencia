@@ -3,18 +3,17 @@ package com.example.jdapresencia.ui.buscador_trabajadores;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -35,10 +34,6 @@ public class BuscadorTrabajadoresFragment extends Fragment {
         buscadorTrabajadoresViewModel =
                 ViewModelProviders.of(this).get(BuscadorTrabajadoresViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_buscador_trabajadores, container, false);
-
-        //Captura el id del usuario logueado enviado del MainActivity
-        SharedPreferences pref = getActivity().getPreferences(getActivity().MODE_PRIVATE);
-        final String idSession = pref.getString("sessionUserId_key", "");
 
         recycler = root.findViewById(R.id.recyclerViewUserFinder);
         recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
@@ -118,37 +113,21 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 username = v.findViewById(R.id.view_holder_username);
                 rol = v.findViewById(R.id.view_holder_rol);
                 boton_ver_registros = v.findViewById(R.id.view_holder_boton);
-                /*
+
                 boton_ver_registros.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        uid_para_fragment_registros.putString("uid", usersList.get(getAdapterPosition()).getIdU());
                         RegistrosTrabajadorFragment fragment = new RegistrosTrabajadorFragment();
-                        fragment.setArguments(uid_para_fragment_registros);
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment,fragment);
-                        ft.addToBackStack(null);
-                        ft.commit();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("uid_key", usersList.get(getAdapterPosition()).getIdU());
+
+                        fragment.setArguments(bundle);
+                        //Se crea un nuevo fragment en mobile_navigation con el layout correspondiente de la clase detalle
+                        Navigation.findNavController(itemView).navigate(R.id.nav_registros_trabajadores, bundle);
                     }
                 });
-
-                 */
             }
-
-            /*
-            public void bind(final String uid_user, final RecyclerViewOnItemClickListener listener) {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        listener.onClick(uid_user);
-
-                    }
-
-                });
-            }
-
-             */
         }
     }
 }

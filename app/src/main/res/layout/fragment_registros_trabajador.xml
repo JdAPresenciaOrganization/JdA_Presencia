@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.buscador_trabajadores.registros_trabajador.RegistrosTrabajadorFragment">
+    tools:context=".ui.buscador_trabajadores.RegistrosTrabajadorFragment">
 
     <RelativeLayout
         android:id="@+id/header"
@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/header_fecha"
             android:layout_marginLeft="20dp"
-            android:text="Hora entrada"
+            android:text="Entrada"
             android:textStyle="bold"
             android:textSize="14dp"/>
         <TextView
@@ -38,8 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_toRightOf="@id/header_entrada"
-            android:layout_marginLeft="10dp"
-            android:text="Hora salida"
+            android:layout_marginLeft="20dp"
+            android:text="Salida"
             android:textStyle="bold"
             android:textSize="14dp"/>
         <TextView
@@ -48,20 +48,16 @@
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:text="Duración jornada"
+            android:text="Duración"
             android:textStyle="bold"
             android:textSize="14dp"/>
 
     </RelativeLayout>
-
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewRegistros"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="30dp"/>
-
-
 
 </RelativeLayout>
