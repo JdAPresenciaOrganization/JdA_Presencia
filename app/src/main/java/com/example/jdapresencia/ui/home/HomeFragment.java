@@ -16,8 +16,6 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
 
-import java.io.IOException;
-
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
@@ -41,22 +39,14 @@ public class HomeFragment extends Fragment {
         bCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    homeViewModel.userCheckIn(idSession);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                homeViewModel.userCheckIn(idSession);
             }
         });
 
         bCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    homeViewModel.userCheckOut(idSession);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                homeViewModel.userCheckOut(idSession);
             }
         });
 

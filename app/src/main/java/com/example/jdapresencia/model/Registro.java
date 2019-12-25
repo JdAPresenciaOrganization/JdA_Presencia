@@ -4,22 +4,32 @@ import java.io.Serializable;
 
 public class Registro implements Serializable {
 
-    String idR, fecha, horaEntrada, horaSalida, id_trabajador;
+    int idR, id_trabajador;
+    String fecha, horaEntrada, horaSalida, horasDia;
 
-    public Registro(String idR, String fecha, String horaEntrada, String horaSalida, String id_trabajador) {
+    public Registro(int idR, String fecha, String horaEntrada, String horaSalida, String horasDia, int id_trabajador) {
         this.idR = idR;
         this.fecha = fecha;
         this.horaEntrada = horaEntrada;
         this.horaSalida = horaSalida;
+        this.horasDia = horasDia;
         this.id_trabajador = id_trabajador;
     }
 
-    public String getIdR() {
+    public int getIdR() {
         return idR;
     }
 
-    public void setIdR(String idR) {
+    public void setIdR(int idR) {
         this.idR = idR;
+    }
+
+    public int getId_trabajador() {
+        return id_trabajador;
+    }
+
+    public void setId_trabajador(int id_trabajador) {
+        this.id_trabajador = id_trabajador;
     }
 
     public String getFecha() {
@@ -46,11 +56,11 @@ public class Registro implements Serializable {
         this.horaSalida = horaSalida;
     }
 
-    public String getId_trabajador() {
-        return id_trabajador;
+    public String getHorasDia() {
+        return horasDia;
     }
 
-    public void setId_trabajador(String id_trabajador) {
-        this.id_trabajador = id_trabajador;
+    public void setHorasDia(String horasDia) {
+        this.horasDia = horasDia;
     }
 }

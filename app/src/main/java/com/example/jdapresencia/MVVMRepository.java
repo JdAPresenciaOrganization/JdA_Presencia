@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.jdapresencia.database.DBDesign;
@@ -327,6 +326,33 @@ public class MVVMRepository {
         return registros;
     }
 
+    public static ArrayList<Registro> getListRegistros(String idSession) {
+        ArrayList<Registro> listRegistros = new ArrayList<>();
 
+        Cursor cursor = db.query(
+                DBDesign.DBEntry.TABLE_REGISTRO,
+                null,
+                DBDesign.DBEntry.TR_C6_ID_TRABAJADOR + "=?",
+                new String[]{idSession},
+                null,
+                null,
+                DBDesign.DBEntry.TR_C1_ID + " DESC");
+
+        while (cursor.moveToNext()) {
+            Registro registro = new Registro(
+                    cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TR_C1_ID)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C2_FECHA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C3_HORA_ENTRADA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C4_HORA_SALIDA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C5_HORAS_DIA)),
+                    cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TR_C6_ID_TRABAJADOR))
+            );
+            listRegistros.add(registro);
+        }
+        cursor.close();
+        db.close();
+        return listRegistros;
+    }
+    
     /******** FIN USER'S REGISTERS METHODS ********/
 }
