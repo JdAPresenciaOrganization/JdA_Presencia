@@ -13,6 +13,7 @@ import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -150,7 +151,6 @@ public class MVVMRepository {
         cursor.close();
         db.close();
     }
-
     /******** FIN CHECK IN/OUT METHODS ********/
 
 
@@ -200,52 +200,19 @@ public class MVVMRepository {
         return hora;
     }
 
-    public static String RestDates(String firstDate, String secondDate) {
-
-        if (secondDate.length()==0) {
-            //Si la jornada está en progreso...
-            return "IN PROGRESS";
+    public static String totalDayHours(String entrada, String salida) throws ParseException {
+        if (salida.length()==0) {
+            return "Not closed";
         }
-        //Convertimos horas, minutos y segundos de la primera hora a segundos
-        int firstDateInSeconds_hours = Integer.parseInt(firstDate.substring(0,2))*3600;
-        int firstDateInSeconds_minutes = Integer.parseInt(firstDate.substring(3,5))*60;
-        int firstDateInSeconds_seconds = Integer.parseInt(firstDate.substring(6,8));
 
-        //Convertimos horas, minutos y segundos de la segunda hora a segundos
-        int secondDateInSeconds_hours = Integer.parseInt(secondDate.substring(0,2))*3600;
-        int secondDateInSeconds_minutes = Integer.parseInt(secondDate.substring(3,5))*60;
-        int secondDateInSeconds_seconds = Integer.parseInt(secondDate.substring(6,8));
+        //Se pasan los 2 strings a formato date y se restan, develve milisegundos
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date date1 = format.parse(entrada);
+        Date date2 = format.parse(salida);
+        long difference = date2.getTime() - date1.getTime();
 
-        //Sumamos dichos segundos en una variable para luego poder restarlas
-        int firstDateInSeconds = firstDateInSeconds_hours + firstDateInSeconds_minutes + firstDateInSeconds_seconds;
-        int secondDateInSeconds = secondDateInSeconds_hours + secondDateInSeconds_minutes + secondDateInSeconds_seconds;
-
-        //Restamos las dos horas para obtener los segundos de diferencia y lo convertimos al formato de fecha inicial
-        int resultInSeconds = secondDateInSeconds - firstDateInSeconds;
-        String finalFormatedTime = fromSecondsToTime(resultInSeconds);
-
-        return finalFormatedTime;
-    }
-
-    public static String fromSecondsToTime(int segundos) {
-
-        //Funcion que recibe segundos en un entero y devuelve dichos segundos en en el siguiente formato HH:MM:SS
-
-        //Primero calculamos las horas, minutos y segundos que equivalen a la cantidad de segundos
-        String hours = format2numbers(Integer.toString(segundos/3600));
-        segundos = segundos%3600;
-        String minutes = format2numbers(Integer.toString(segundos/60));
-        String seconds = format2numbers(Integer.toString(segundos%60));
-
-        return hours + ":" + minutes + ":" + seconds;
-
-    }
-    public static String format2numbers(String number) {
-        if (number.length()<2) {
-            return "0" + number;
-        } else {
-            return number;
-        }
+        //Se pasan los milisegundos a HH:mm:ss
+        return String.format("%1$tH:%1$tM:%1$tS", difference);
     }
     /******** FIN DATE METHODS ********/
 
@@ -308,7 +275,6 @@ public class MVVMRepository {
 
         return listUser;
     }
-
     /******** FIN BUSCADOR USER METHODS ********/
 
     /******** MY REGISTERS METHODS ********/

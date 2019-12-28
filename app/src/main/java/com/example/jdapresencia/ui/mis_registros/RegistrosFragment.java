@@ -16,9 +16,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.jdapresencia.MVVMRepository;
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.Registro;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class RegistrosFragment extends Fragment {
@@ -76,7 +78,11 @@ public class RegistrosFragment extends Fragment {
             holder.tvFecha.setText(registro.getFecha());
             holder.tvHoraEntrada.setText(registro.getHoraEntrada());
             holder.tvHoraSalida.setText(registro.getHoraSalida());
-            holder.tvDuracion.setText("duration");
+            try {
+                holder.tvDuracion.setText(MVVMRepository.totalDayHours(registro.getHoraEntrada(), registro.getHoraSalida()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
