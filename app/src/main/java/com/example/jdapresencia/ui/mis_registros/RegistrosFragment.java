@@ -53,7 +53,7 @@ public class RegistrosFragment extends Fragment {
         return root;
     }
 
-    public class AdapterRegistros extends RecyclerView.Adapter<AdapterRegistros.ViewHolderRegistros> {
+    public static class AdapterRegistros extends RecyclerView.Adapter<AdapterRegistros.ViewHolderRegistros> {
 
         Context context;
         ArrayList<Registro> listRegistros;
@@ -76,6 +76,7 @@ public class RegistrosFragment extends Fragment {
             holder.tvFecha.setText(registro.getFecha());
             holder.tvHoraEntrada.setText(registro.getHoraEntrada());
             holder.tvHoraSalida.setText(registro.getHoraSalida());
+            holder.tvDuracion.setText("duration");
         }
 
         @Override
@@ -84,7 +85,7 @@ public class RegistrosFragment extends Fragment {
         }
 
         public class ViewHolderRegistros extends RecyclerView.ViewHolder {
-            TextView tvFecha, tvHoraEntrada, tvHoraSalida;
+            TextView tvFecha, tvHoraEntrada, tvHoraSalida, tvDuracion;
 
             public ViewHolderRegistros(@NonNull View itemView) {
                 super(itemView);
@@ -92,6 +93,7 @@ public class RegistrosFragment extends Fragment {
                 tvFecha = itemView.findViewById(R.id.idDatoFecha);
                 tvHoraEntrada = itemView.findViewById(R.id.idDatoHoraEntrada);
                 tvHoraSalida = itemView.findViewById(R.id.idDatoHoraSalida);
+                tvDuracion = itemView.findViewById(R.id.idDatoDuracion);
 
             }
         }

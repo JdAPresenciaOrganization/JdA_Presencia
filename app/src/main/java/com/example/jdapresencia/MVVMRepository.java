@@ -12,13 +12,6 @@ import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
@@ -290,7 +283,6 @@ public class MVVMRepository {
                 listUser.add(user);
             }
             cursor.close();
-            db.close();
 
         } else {
             Cursor cursor = db.query(
@@ -312,7 +304,6 @@ public class MVVMRepository {
                 listUser.add(user);
             }
             cursor.close();
-            db.close();
         }
 
         return listUser;
@@ -352,7 +343,6 @@ public class MVVMRepository {
             listRegistros.add(registro);
         }
         cursor.close();
-        db.close();
         return listRegistros;
     }
 

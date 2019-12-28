@@ -1,7 +1,6 @@
 package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;

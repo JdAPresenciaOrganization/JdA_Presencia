@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.Registro;
+import com.example.jdapresencia.ui.mis_registros.RegistrosFragment;
 
 import java.util.ArrayList;
 
@@ -39,56 +40,11 @@ public class RegistrosTrabajadorFragment extends Fragment {
         recycler = root.findViewById(R.id.recyclerViewRegistros);
         recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
 
-        RegisterAdapter adapter = new RegisterAdapter(registrosTrabajadorViewModel.getListRegistros(String.valueOf(uid)));
+        //Se aprovecha el adapter de los registros personales del trabajador
+        RegistrosFragment.AdapterRegistros adapter =
+                new RegistrosFragment.AdapterRegistros(getActivity(), registrosTrabajadorViewModel.getListRegistros(String.valueOf(uid)));
         recycler.setAdapter(adapter);
 
         return root;
-    }
-
-    public class RegisterAdapter extends RecyclerView.Adapter<RegisterAdapter.ViewHolder> {
-
-        private ArrayList<Registro> listRegistros;
-
-        public RegisterAdapter(ArrayList<Registro> listRegistros){
-            this.listRegistros = listRegistros;
-        }
-
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_registros_trabajador, parent, false);
-            return new ViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            Registro registro = listRegistros.get(position);
-
-            holder.fecha.setText(registro.getFecha());
-            holder.entrada.setText(registro.getHoraEntrada());
-            holder.salida.setText(registro.getHoraSalida());
-            //holder.duracion.setText(registrosTrabajadorViewModel.RestDates(entrada, salida));
-        }
-
-        @Override
-        public int getItemCount() {
-            return listRegistros.size();
-        }
-
-        public class ViewHolder extends RecyclerView.ViewHolder {
-            private TextView fecha;
-            private TextView entrada;
-            private TextView salida;
-            private TextView duracion;
-
-            public ViewHolder(@NonNull View v) {
-                super(v);
-
-                fecha = v.findViewById(R.id.fecha);
-                entrada = v.findViewById(R.id.entrada);
-                salida = v.findViewById(R.id.salida);
-                duracion = v.findViewById(R.id.duracion);
-            }
-        }
     }
 }
