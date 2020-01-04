@@ -313,4 +313,46 @@ public class MVVMRepository {
     }
 
     /******** FIN MY REGISTERS METHODS ********/
+
+    /********* GESTIONAR TRABAJADORES METHODS *********/
+
+    /**
+     * Se añade el nuevo trabajador si el username no esta ya registrado
+     * @param user
+     * @param pass
+     */
+    public static void addNewWorker(String user, String pass) {
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
+            Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
+        } else {
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
+
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String column1 = cursor.getString(0);
+                    String column2 = cursor.getString(1);
+                    String column3 = cursor.getString(2);
+                    String column4 = cursor.getString(3);
+
+                    Toast.makeText(context, "User " + column3 + " already exists", Toast.LENGTH_SHORT).show();
+                } while(cursor.moveToNext());
+            } else {
+                ContentValues values = new ContentValues();
+                //values.put(DBDesign.DBEntry.TU_C1_ID, 1);
+                values.put(DBDesign.DBEntry.TU_C2_ROL, "trabajador");
+                values.put(DBDesign.DBEntry.TU_C3_USERNAME, user);
+                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, pass);
+                db.insert(DBDesign.DBEntry.TABLE_USER, null, values);
+
+                Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
+    /********* FIN GESTIONAR TRABAJADORES METHODS *********/
 }
