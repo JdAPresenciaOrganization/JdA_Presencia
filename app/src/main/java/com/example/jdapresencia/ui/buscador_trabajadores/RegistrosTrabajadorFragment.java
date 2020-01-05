@@ -13,13 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.jdapresencia.R;
-import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.ui.mis_registros.RegistrosFragment;
-
-import java.util.ArrayList;
 
 public class RegistrosTrabajadorFragment extends Fragment {
 

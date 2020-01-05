@@ -6,14 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.navigation.Navigation;
 
 import com.example.jdapresencia.R;
 
@@ -45,8 +42,10 @@ public class GestionarTrabajadoresFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ModificarTrabajadoresFragment fragment = new ModificarTrabajadoresFragment();
-
-                Navigation.findNavController(v).navigate(R.id.nav_registros_trabajadores);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
             }
         });
 

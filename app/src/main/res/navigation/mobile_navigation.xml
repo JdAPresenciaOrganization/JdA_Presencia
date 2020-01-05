@@ -41,11 +41,6 @@
         tools:layout="@layout/fragment_registros_trabajador" />
 
     <fragment
-        android:id="@+id/nav_modificar_trabajadores"
-        android:name="com.example.jdapresencia.ui.gestionar_trabajadores.ModificarTrabajadoresFragment"
-        tools:layout="@layout/fragment_modificar_trabajadores" />
-
-    <fragment
         android:id="@+id/nav_send"
         android:name="com.example.jdapresencia.ui.send.SendFragment"
         android:label="@string/menu_send"

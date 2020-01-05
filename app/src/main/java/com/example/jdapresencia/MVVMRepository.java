@@ -354,5 +354,90 @@ public class MVVMRepository {
         }
     }
 
+    /**
+     * Se puede actualizar el nombre, la contraseña o el rol del trabajador
+     * @param username
+     * @param newUsername
+     * @param newPwd
+     * @param userRol
+     */
+    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) {
+        if (TextUtils.isEmpty(username) && TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
+            Toast.makeText(context, "Form is empty", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(username)) {
+            Toast.makeText(context, "Username is required", Toast.LENGTH_SHORT).show();
+        } else {
+            //Se mira si existe el usuario introducido
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
+
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String column1 = cursor.getString(0);
+                    String column2 = cursor.getString(1);
+                    String column3 = cursor.getString(2);
+                    String column4 = cursor.getString(3);
+
+                    // Update
+                    ContentValues updateValues = new ContentValues();
+
+                    //Si los campos de nuevo nombre y nueva contraseña estan vacios, solo se actualiza el rol
+                    if (TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+
+                        Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
+                    //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
+                    } else if (TextUtils.isEmpty(newUsername)) {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+
+                        Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                    //Si el campo de nuevo contraseá esta vacio, solo se actualiza el nombre y el rol
+                    } else if (TextUtils.isEmpty(newPwd)) {
+
+                        //Se mira si ya existe el nuevo nombre
+                        Cursor cursor2 = db.rawQuery("Select * from user where username=?", new String[]{newUsername});
+                        if (cursor2.moveToFirst()){
+                            do {
+                                // Passing values
+                                String column11 = cursor2.getString(0);
+                                String column22 = cursor2.getString(1);
+                                String column33 = cursor2.getString(2);
+                                String column44 = cursor2.getString(3);
+
+                                if (column33.equals(newUsername)) {
+                                    Toast.makeText(context, "User " + column3 + " already exists", Toast.LENGTH_SHORT).show();
+                                }
+                            } while(cursor.moveToNext());
+                        } else {
+                            updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                            updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
+                            db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+
+                            Toast.makeText(context, "Username actualizado", Toast.LENGTH_SHORT).show();
+                        }
+                        cursor2.close();
+                    //Si se rellenan todos los campos, se actualiza con todos los campos
+                    } else {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+
+                        Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                    }
+                } while(cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
     /********* FIN GESTIONAR TRABAJADORES METHODS *********/
 }
