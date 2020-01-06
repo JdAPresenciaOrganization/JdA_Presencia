@@ -18,7 +18,7 @@ public class GestionarTrabajadoresFragment extends Fragment {
 
     private GestionarTrabajadoresViewModel gestionarTrabajadoresViewModel;
     EditText newUser, pass;
-    Button bNewRegister, bModifyWorker;
+    Button bNewRegister, bModifyWorker, bDeleteUser;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -30,6 +30,7 @@ public class GestionarTrabajadoresFragment extends Fragment {
         pass = root.findViewById(R.id.passwordNewUser);
         bNewRegister = root.findViewById(R.id.button_addNewUser);
         bModifyWorker = root.findViewById(R.id.button_modifyUser);
+        bDeleteUser = root.findViewById(R.id.button_deleteUser);
 
         bNewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +43,17 @@ public class GestionarTrabajadoresFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 ModificarTrabajadoresFragment fragment = new ModificarTrabajadoresFragment();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, fragment);
+                ft.addToBackStack(null);
+                ft.commit();
+            }
+        });
+
+        bDeleteUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EliminarTrabajadoresFragment fragment = new EliminarTrabajadoresFragment();
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, fragment);
                 ft.addToBackStack(null);

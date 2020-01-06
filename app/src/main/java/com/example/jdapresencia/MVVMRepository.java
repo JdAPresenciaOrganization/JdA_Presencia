@@ -439,5 +439,33 @@ public class MVVMRepository {
         }
     }
 
+    public static void deleteWorker(String username) {
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(context, "Enter username to delete", Toast.LENGTH_SHORT).show();
+        } else {
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    // Passing values
+                    String column1 = cursor.getString(0);
+                    String column2 = cursor.getString(1);
+                    String column3 = cursor.getString(2);
+                    String column4 = cursor.getString(3);
+
+                    db.delete(DBDesign.DBEntry.TABLE_USER, "_id=?", new String[] {column1});
+
+                    Toast.makeText(context, "User " + column3 + " deleted", Toast.LENGTH_SHORT).show();
+                } while (cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
     /********* FIN GESTIONAR TRABAJADORES METHODS *********/
 }

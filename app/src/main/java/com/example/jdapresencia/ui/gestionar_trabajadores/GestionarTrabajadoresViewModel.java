@@ -1,7 +1,5 @@
 package com.example.jdapresencia.ui.gestionar_trabajadores;
 
-import android.text.Editable;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -27,5 +25,9 @@ public class GestionarTrabajadoresViewModel extends ViewModel {
 
     public void updateWorker(String username, String newUsername, String newPwd, String userRol) {
         MVVMRepository.updateWorker(username, newUsername, newPwd, userRol);
+    }
+
+    public void deleteWorker(String username) {
+        MVVMRepository.deleteWorker(username);
     }
 }

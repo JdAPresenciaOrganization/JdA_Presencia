@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.example.jdapresencia.R;
 
@@ -48,7 +47,6 @@ public class ModificarTrabajadoresFragment extends Fragment {
 
                 // find the radiobutton by returned id
                 radioButton = root.findViewById(selectedId);
-
 
                 modificarTrabajadorViewModel.updateWorker(usernameToModify.getText().toString(),
                         usernameUpdate.getText().toString(), pwdUpdate.getText().toString(), radioButton.getText().toString());
