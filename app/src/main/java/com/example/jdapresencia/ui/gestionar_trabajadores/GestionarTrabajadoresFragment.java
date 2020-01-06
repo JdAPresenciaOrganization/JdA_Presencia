@@ -14,6 +14,15 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.example.jdapresencia.R;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public class GestionarTrabajadoresFragment extends Fragment {
 
     private GestionarTrabajadoresViewModel gestionarTrabajadoresViewModel;
@@ -35,7 +44,23 @@ public class GestionarTrabajadoresFragment extends Fragment {
         bNewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gestionarTrabajadoresViewModel.addNewWorker(newUser.getText().toString(), pass.getText().toString());
+                try {
+                    gestionarTrabajadoresViewModel.addNewWorker(newUser.getText().toString(), pass.getText().toString());
+                } catch (BadPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchPaddingException e) {
+                    e.printStackTrace();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (IllegalBlockSizeException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeyException e) {
+                    e.printStackTrace();
+                } catch (InvalidKeySpecException e) {
+                    e.printStackTrace();
+                }
             }
         });
 

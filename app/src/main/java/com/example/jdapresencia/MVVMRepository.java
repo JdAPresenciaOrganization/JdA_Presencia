@@ -12,6 +12,11 @@ import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -23,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class MVVMRepository {
 
@@ -48,24 +57,29 @@ public class MVVMRepository {
      * @param user
      * @param pass
      */
-    public static void checkLogin(String user, String pass) {
+    public static void checkLogin(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
         } else {
             DBHelper dbHelper = new DBHelper(context);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("Select * from user where username=? and password=?", new String[]{user, pass});
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
                 do {
                     // Passing values
-                    String column1 = cursor.getString(0);
-                    String column2 = cursor.getString(1);
-                    String column3 = cursor.getString(2);
-                    String column4 = cursor.getString(3);
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String username = cursor.getString(2);
+                    String password = cursor.getString(3);
 
-                    //Se pasa el id y el rol de usuario
-                    LoginActivity.loginSuccess(column1, column2);
+                    //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
+                    if (pass.equals(decrypt(password))) {
+                        //Se pasa el id y el rol de usuario
+                        LoginActivity.loginSuccess(uid, rol);
+                    } else {
+                        Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                    }
                 } while(cursor.moveToNext());
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
@@ -73,6 +87,59 @@ public class MVVMRepository {
             cursor.close();
             db.close();
         }
+    }
+
+    /**
+     * Encirptación de la contraseña
+     * @param pwd
+     * @return
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     * @throws NoSuchProviderException
+     */
+    public static String encrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, NoSuchProviderException {
+        RSA rsa = new RSA();
+        //le asignamos el Contexto
+        rsa.setContext(context);
+        //Generamos un juego de claves
+        rsa.genKeyPair(1024);
+        //Guardamos en la memoria las claves
+        rsa.saveToDiskPrivateKey("rsa.pri");
+        rsa.saveToDiskPublicKey("rsa.pub");
+        //Ciframos
+        String encode_text = rsa.Encrypt(pwd);
+
+        return encode_text;
+    }
+
+    /**
+     * Desencriptación de la contraseña
+     * @param pwd
+     * @return
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    public static String decrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IOException {
+        //Creamos otro objeto de nuestra clase RSA
+        RSA rsa2 = new RSA();
+        //Le pasamos el contexto
+        rsa2.setContext(context);
+        //Cargamos las claves que creamos anteriormente
+        rsa2.openFromDiskPrivateKey("rsa.pri");
+        rsa2.openFromDiskPublicKey("rsa.pub");
+        //Desciframos
+        String decode_text = rsa2.Decrypt(pwd);
+
+        return decode_text;
     }
 
     /******** CHECK IN/OUT METHODS ********/
@@ -321,7 +388,7 @@ public class MVVMRepository {
      * @param user
      * @param pass
      */
-    public static void addNewWorker(String user, String pass) {
+    public static void addNewWorker(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
         } else {
@@ -332,19 +399,19 @@ public class MVVMRepository {
             if (cursor.moveToFirst()){
                 do {
                     // Passing values
-                    String column1 = cursor.getString(0);
-                    String column2 = cursor.getString(1);
-                    String column3 = cursor.getString(2);
-                    String column4 = cursor.getString(3);
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String username = cursor.getString(2);
+                    String password = cursor.getString(3);
 
-                    Toast.makeText(context, "User " + column3 + " already exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "User " + username + " already exists", Toast.LENGTH_SHORT).show();
                 } while(cursor.moveToNext());
             } else {
                 ContentValues values = new ContentValues();
                 //values.put(DBDesign.DBEntry.TU_C1_ID, 1);
                 values.put(DBDesign.DBEntry.TU_C2_ROL, "trabajador");
                 values.put(DBDesign.DBEntry.TU_C3_USERNAME, user);
-                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, pass);
+                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(pass));
                 db.insert(DBDesign.DBEntry.TABLE_USER, null, values);
 
                 Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
@@ -361,7 +428,7 @@ public class MVVMRepository {
      * @param newPwd
      * @param userRol
      */
-    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) {
+    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
         if (TextUtils.isEmpty(username) && TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
             Toast.makeText(context, "Form is empty", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(username)) {
@@ -375,10 +442,10 @@ public class MVVMRepository {
             if (cursor.moveToFirst()){
                 do {
                     // Passing values
-                    String column1 = cursor.getString(0);
-                    String column2 = cursor.getString(1);
-                    String column3 = cursor.getString(2);
-                    String column4 = cursor.getString(3);
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String userName = cursor.getString(2);
+                    String password = cursor.getString(3);
 
                     // Update
                     ContentValues updateValues = new ContentValues();
@@ -386,14 +453,14 @@ public class MVVMRepository {
                     //Si los campos de nuevo nombre y nueva contraseña estan vacios, solo se actualiza el rol
                     if (TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
-                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
                     //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
                     } else if (TextUtils.isEmpty(newUsername)) {
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
-                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
                     //Si el campo de nuevo contraseá esta vacio, solo se actualiza el nombre y el rol
@@ -404,19 +471,19 @@ public class MVVMRepository {
                         if (cursor2.moveToFirst()){
                             do {
                                 // Passing values
-                                String column11 = cursor2.getString(0);
-                                String column22 = cursor2.getString(1);
-                                String column33 = cursor2.getString(2);
-                                String column44 = cursor2.getString(3);
+                                String uid2 = cursor2.getString(0);
+                                String rol2 = cursor2.getString(1);
+                                String userName2 = cursor2.getString(2);
+                                String password2 = cursor2.getString(3);
 
-                                if (column33.equals(newUsername)) {
-                                    Toast.makeText(context, "User " + column3 + " already exists", Toast.LENGTH_SHORT).show();
+                                if (userName2.equals(newUsername)) {
+                                    Toast.makeText(context, "User " + userName + " already exists", Toast.LENGTH_SHORT).show();
                                 }
                             } while(cursor.moveToNext());
                         } else {
                             updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
                             updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
-                            db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+                            db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                             Toast.makeText(context, "Username actualizado", Toast.LENGTH_SHORT).show();
                         }
@@ -425,8 +492,8 @@ public class MVVMRepository {
                     } else {
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
                         updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
-                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+column1, null);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
                     }
@@ -439,6 +506,10 @@ public class MVVMRepository {
         }
     }
 
+    /**
+     * Delete user
+     * @param username
+     */
     public static void deleteWorker(String username) {
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter username to delete", Toast.LENGTH_SHORT).show();
@@ -450,14 +521,14 @@ public class MVVMRepository {
             if (cursor.moveToFirst()) {
                 do {
                     // Passing values
-                    String column1 = cursor.getString(0);
-                    String column2 = cursor.getString(1);
-                    String column3 = cursor.getString(2);
-                    String column4 = cursor.getString(3);
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String user = cursor.getString(2);
+                    String pwd = cursor.getString(3);
 
-                    db.delete(DBDesign.DBEntry.TABLE_USER, "_id=?", new String[] {column1});
+                    db.delete(DBDesign.DBEntry.TABLE_USER, "_id=?", new String[] {uid});
 
-                    Toast.makeText(context, "User " + column3 + " deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "User " + user + " deleted", Toast.LENGTH_SHORT).show();
                 } while (cursor.moveToNext());
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();

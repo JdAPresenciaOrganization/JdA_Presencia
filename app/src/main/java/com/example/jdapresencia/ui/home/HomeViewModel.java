@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.jdapresencia.MVVMRepository;
 
-import java.io.IOException;
-
 public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
