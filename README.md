@@ -1,5 +1,9 @@
 # JdA_Presencia
 
+jdA Presència versió 2\
+-> La app esta conectada con SQLite y ahora solo viene con un usuario: admin 1234 por defecto.\
+-> Este usuario administrador puede crear trabajadores que podrán hacer check in y check out.
+
 jdA Presència versió 1\
 -> Se ha hecho el login en MVP, éste lleva al Navigation Drawer que utiliza MVVM.\
 -> La App sólo tiene 3 usuarios: (super, 1234), (admin, 1234), (worker, 1234).\
