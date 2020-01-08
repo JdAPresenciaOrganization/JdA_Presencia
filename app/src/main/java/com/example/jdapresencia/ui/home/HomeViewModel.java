@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.jdapresencia.MVVMRepository;
 
-import java.io.IOException;
-
 public class HomeViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
@@ -21,11 +19,11 @@ public class HomeViewModel extends ViewModel {
         return mText;
     }
 
-    public void userCheckIn(String idSession) throws IOException {
+    public void userCheckIn(String idSession) {
         MVVMRepository.userCheckIn(idSession);
     }
 
-    public void userCheckOut(String idSession) throws IOException {
+    public void userCheckOut(String idSession) {
         MVVMRepository.userCheckOut(idSession);
     }
 }

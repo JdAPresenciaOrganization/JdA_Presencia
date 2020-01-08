@@ -16,9 +16,11 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.jdapresencia.MVVMRepository;
 import com.example.jdapresencia.R;
 import com.example.jdapresencia.model.Registro;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 
 public class RegistrosFragment extends Fragment {
@@ -53,7 +55,7 @@ public class RegistrosFragment extends Fragment {
         return root;
     }
 
-    public class AdapterRegistros extends RecyclerView.Adapter<AdapterRegistros.ViewHolderRegistros> {
+    public static class AdapterRegistros extends RecyclerView.Adapter<AdapterRegistros.ViewHolderRegistros> {
 
         Context context;
         ArrayList<Registro> listRegistros;
@@ -76,6 +78,11 @@ public class RegistrosFragment extends Fragment {
             holder.tvFecha.setText(registro.getFecha());
             holder.tvHoraEntrada.setText(registro.getHoraEntrada());
             holder.tvHoraSalida.setText(registro.getHoraSalida());
+            try {
+                holder.tvDuracion.setText(MVVMRepository.totalDayHours(registro.getHoraEntrada(), registro.getHoraSalida()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -84,7 +91,7 @@ public class RegistrosFragment extends Fragment {
         }
 
         public class ViewHolderRegistros extends RecyclerView.ViewHolder {
-            TextView tvFecha, tvHoraEntrada, tvHoraSalida;
+            TextView tvFecha, tvHoraEntrada, tvHoraSalida, tvDuracion;
 
             public ViewHolderRegistros(@NonNull View itemView) {
                 super(itemView);
@@ -92,6 +99,7 @@ public class RegistrosFragment extends Fragment {
                 tvFecha = itemView.findViewById(R.id.idDatoFecha);
                 tvHoraEntrada = itemView.findViewById(R.id.idDatoHoraEntrada);
                 tvHoraSalida = itemView.findViewById(R.id.idDatoHoraSalida);
+                tvDuracion = itemView.findViewById(R.id.idDatoDuracion);
 
             }
         }

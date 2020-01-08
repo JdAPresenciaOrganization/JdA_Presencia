@@ -37,5 +37,4 @@
         android:text="@string/boton_ver_registros"
         android:visibility="invisible"/>
 
-
 </RelativeLayout>

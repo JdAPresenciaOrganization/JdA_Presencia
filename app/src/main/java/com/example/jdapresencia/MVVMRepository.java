@@ -1,20 +1,24 @@
 package com.example.jdapresencia;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.example.jdapresencia.database.DBDesign;
+import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.spec.InvalidKeySpecException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,14 +29,21 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+
 public class MVVMRepository {
 
     private static Context context;
+    private static SQLiteDatabase db;
     //Singleton
     private static MVVMRepository srepository;
 
     private MVVMRepository(Context context){
         this.context = context;
+        DBHelper dbHelper = new DBHelper(context);
+        db = dbHelper.getWritableDatabase();
     }
     public static MVVMRepository get(Context context){
         if (srepository == null){
@@ -41,123 +52,181 @@ public class MVVMRepository {
         return srepository;
     }
 
-    /******** CHECK IN/OUT METHODS ********/
-
-    public static void userCheckIn(String idSession) throws IOException {
-        //Se crea un fichero por cada usuario utilizando el id del usuario
-        String FILE_NAME = "/"+idSession+".dat";
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-
-        /* Si el fichero existe, se recorren los datos ya existentes en el fichero
-        para añadirle el último registro que se haga, sino, se crea el primer registro
-        del check in que tendrá id de registro 1 */
-        if (file.exists()) {
-            //ArrayList para guardar los datos de fichero y poder hacer un add luego
-            ArrayList<Registro> userRegisterFileAppend = new ArrayList<>();
-            //Variable auxiliar para guardar el id de los registros que se van recorriendo
-            int idRegistroSiguiente = 0;
-            String diaUltimoRegistroAUX = "";
-
-            for (int i = 0; i < getRegisters(idSession).size(); i++) {
-                /*
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id Registro", getUserRegisterFile(idSession).get(i).getIdR());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id FECHA", getUserRegisterFile(idSession).get(i).getFecha());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id ENTRADA", getUserRegisterFile(idSession).get(i).getHoraEntrada());
-                Log.i("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX id SALIDA", getUserRegisterFile(idSession).get(i).getHoraSalida());
-                */
-
-                userRegisterFileAppend.add(getRegisters(idSession).get(i));
-                idRegistroSiguiente = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
-                diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
-            }
-
-            //Si la fecha del último registro no es igual que la actual es que no se ha hecho check in
-            if ( !diaUltimoRegistroAUX.equals(getDiaActual(fechaActualDiaHora())) ) {
-                FileOutputStream fileout = new FileOutputStream(file);
-                ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
-
-                Registro registro2 = new Registro(Integer.toString(idRegistroSiguiente + 1), getDiaActual(fechaActualDiaHora()), getHoraActual(fechaActualDiaHora()), "", idSession);
-                userRegisterFileAppend.add(registro2);
-
-                dataOS.writeObject(userRegisterFileAppend);
-                dataOS.close();
-
-                Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "¡Ya has hecho check in hoy!",Toast.LENGTH_SHORT).show();
-            }
-
+    /**
+     * Login Activity
+     * @param user
+     * @param pass
+     */
+    public static void checkLogin(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
+            Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
         } else {
-            /* Se crea guarda en el fichero por primera vez el registro,
-            un ArrayList con id registro 1 y la fecha actual con la hora del check in */
-            ArrayList<Registro> userRegisterFile = new ArrayList<>();
-            Registro registro1 = new Registro("1", "09/12/2019", "10:20:00", "19:00:00", idSession);
-            Registro registro2 = new Registro("2", "10/12/2019", "10:00:00", "18:00:00", idSession);
-            Registro registro3 = new Registro("3", "11/12/2019", "10:10:00", "18:30:00", idSession);
-            Registro registro4 = new Registro("4", "12/12/2019", "10:00:00", "18:00:00", idSession);
-            Registro registro5 = new Registro("5", "13/12/2019", "10:10:00", "18:30:00", idSession);
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
-            FileOutputStream fileout = new FileOutputStream(file);
-            ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String username = cursor.getString(2);
+                    String password = cursor.getString(3);
 
-            userRegisterFile.add(registro1);
-            userRegisterFile.add(registro2);
-            userRegisterFile.add(registro3);
-            userRegisterFile.add(registro4);
-            userRegisterFile.add(registro5);
-
-            dataOS.writeObject(userRegisterFile);
-            dataOS.close();
-
-            Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
+                    //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
+                    if (pass.equals(decrypt(password))) {
+                        //Se pasa el id y el rol de usuario
+                        LoginActivity.loginSuccess(uid, rol);
+                    } else {
+                        Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                    }
+                } while(cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
         }
     }
 
-    public static void userCheckOut(String idSession) throws IOException {
-        String FILE_NAME = "/"+idSession+".dat";
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
+    /**
+     * Encirptación de la contraseña
+     * @param pwd
+     * @return
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     * @throws NoSuchProviderException
+     */
+    public static String encrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, NoSuchProviderException {
+        RSA rsa = new RSA();
+        //le asignamos el Contexto
+        rsa.setContext(context);
+        //Generamos un juego de claves
+        rsa.genKeyPair(1024);
+        //Guardamos en la memoria las claves
+        rsa.saveToDiskPrivateKey("rsa.pri");
+        rsa.saveToDiskPublicKey("rsa.pub");
+        //Ciframos
+        String encode_text = rsa.Encrypt(pwd);
 
-        //ArrayList para guardar los datos de fichero y poder hacer un add luego con la hora de salida
-        ArrayList<Registro> userRegisterFileAppend = new ArrayList<>();
-        int idRegistroActual = 0;
-        String diaUltimoRegistroAUX = "";
-        boolean lastRegister = false;
+        return encode_text;
+    }
 
-        for (int i = 0; i < getRegisters(idSession).size(); i++) {
-            userRegisterFileAppend.add(getRegisters(idSession).get(i));
-            idRegistroActual = Integer.parseInt(getRegisters(idSession).get(i).getIdR());
-            diaUltimoRegistroAUX = getRegisters(idSession).get(i).getFecha();
+    /**
+     * Desencriptación de la contraseña
+     * @param pwd
+     * @return
+     * @throws IllegalBlockSizeException
+     * @throws InvalidKeyException
+     * @throws BadPaddingException
+     * @throws NoSuchAlgorithmException
+     * @throws NoSuchPaddingException
+     * @throws InvalidKeySpecException
+     * @throws IOException
+     */
+    public static String decrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IOException {
+        //Creamos otro objeto de nuestra clase RSA
+        RSA rsa2 = new RSA();
+        //Le pasamos el contexto
+        rsa2.setContext(context);
+        //Cargamos las claves que creamos anteriormente
+        rsa2.openFromDiskPrivateKey("rsa.pri");
+        rsa2.openFromDiskPublicKey("rsa.pub");
+        //Desciframos
+        String decode_text = rsa2.Decrypt(pwd);
 
-            if (i == getRegisters(idSession).size() - 1) {
-                lastRegister = true;
+        return decode_text;
+    }
+
+    /******** CHECK IN/OUT METHODS ********/
+
+    public static void userCheckIn(String idSession) {
+
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
+                new String[]{getDiaActual(fechaActualDiaHora()), idSession});
+
+        if (cursor.moveToFirst()){
+            do {
+                // Passing values
+                String fecha = cursor.getString(1);
+                String hEntrada = cursor.getString(2);
+                String hSalida = cursor.getString(3);
+                String hTotales = cursor.getString(4);
+                String idU = cursor.getString(5);
+
+                Toast.makeText(context, "¡Ya has hecho check in hoy!",Toast.LENGTH_SHORT).show();
+            } while(cursor.moveToNext());
+        } else {
+            ContentValues insertValues = new ContentValues();
+            insertValues.put(DBDesign.DBEntry.TR_C2_FECHA, getDiaActual(fechaActualDiaHora()));
+            insertValues.put(DBDesign.DBEntry.TR_C3_HORA_ENTRADA, getHoraActual(fechaActualDiaHora()));
+            insertValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, "");
+            insertValues.put(DBDesign.DBEntry.TR_C5_HORAS_DIA, "");
+            insertValues.put(DBDesign.DBEntry.TR_C6_ID_TRABAJADOR, idSession);
+            //Insert the new row, returning the primary key value of the new row
+            long rowInserted = db.insert(DBDesign.DBEntry.TABLE_REGISTRO, null, insertValues);
+
+            if(rowInserted != -1) {
+                Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(context, "Something wrong", Toast.LENGTH_SHORT).show();
             }
         }
+        cursor.close();
+        db.close();
+    }
 
-        //Si la fecha del último registro es igual que la actual es que ya se ha hecho check in
-        if ( lastRegister && diaUltimoRegistroAUX.equals(getDiaActual(fechaActualDiaHora())) ) {
-            FileOutputStream fileout = new FileOutputStream(file);
-            ObjectOutputStream dataOS = new ObjectOutputStream(fileout);
+    public static void userCheckOut(String idSession) {
 
-            userRegisterFileAppend.get(idRegistroActual - 1).setHoraSalida(getHoraActual(fechaActualDiaHora()));
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
+                new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
-            dataOS.writeObject(userRegisterFileAppend);
-            dataOS.close();
+        if (cursor.moveToFirst()){
+            do {
+                // Passing values
+                String idR = cursor.getString(0);
+                String fecha = cursor.getString(1);
+                String hEntrada = cursor.getString(2);
+                String hSalida = cursor.getString(3);
+                String hTotales = cursor.getString(4);
+                String idU = cursor.getString(5);
 
-            Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+                //Update con la fecha de salida
+                if (hSalida.equals("")) {
+                    ContentValues updateValues = new ContentValues();
+                    updateValues.put(DBDesign.DBEntry.TR_C4_HORA_SALIDA, getHoraActual(fechaActualDiaHora()));
+                    db.update(DBDesign.DBEntry.TABLE_REGISTRO, updateValues, "_id="+idR, null);
+
+                    Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Registro del día ya finalizado",Toast.LENGTH_SHORT).show();
+                }
+
+            } while(cursor.moveToNext());
         } else {
             Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
         }
+        cursor.close();
+        db.close();
     }
-
     /******** FIN CHECK IN/OUT METHODS ********/
 
 
     /******** DATE METHODS ********/
+
     /**
      * Devuelve la fecha en formato dd/MM/yyyy HH:mm:ss
      * @return
      */
-
     public static String fechaActualDiaHora(){
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT+1"));
@@ -198,125 +267,276 @@ public class MVVMRepository {
         return hora;
     }
 
-    public static String RestDates(String firstDate, String secondDate) {
-
-        if (secondDate.length()==0) {
-            //Si la jornada está en progreso...
-            return "IN PROGRESS";
+    public static String totalDayHours(String entrada, String salida) throws ParseException {
+        if (salida.length()==0) {
+            return "Not closed";
         }
-        //Convertimos horas, minutos y segundos de la primera hora a segundos
-        int firstDateInSeconds_hours = Integer.parseInt(firstDate.substring(0,2))*3600;
-        int firstDateInSeconds_minutes = Integer.parseInt(firstDate.substring(3,5))*60;
-        int firstDateInSeconds_seconds = Integer.parseInt(firstDate.substring(6,8));
 
-        //Convertimos horas, minutos y segundos de la segunda hora a segundos
-        int secondDateInSeconds_hours = Integer.parseInt(secondDate.substring(0,2))*3600;
-        int secondDateInSeconds_minutes = Integer.parseInt(secondDate.substring(3,5))*60;
-        int secondDateInSeconds_seconds = Integer.parseInt(secondDate.substring(6,8));
+        //Se pasan los 2 strings a formato date y se restan, develve milisegundos
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        Date date1 = format.parse(entrada);
+        Date date2 = format.parse(salida);
+        long difference = date2.getTime() - date1.getTime();
 
-        //Sumamos dichos segundos en una variable para luego poder restarlas
-        int firstDateInSeconds = firstDateInSeconds_hours + firstDateInSeconds_minutes + firstDateInSeconds_seconds;
-        int secondDateInSeconds = secondDateInSeconds_hours + secondDateInSeconds_minutes + secondDateInSeconds_seconds;
-
-        //Restamos las dos horas para obtener los segundos de diferencia y lo convertimos al formato de fecha inicial
-        int resultInSeconds = secondDateInSeconds - firstDateInSeconds;
-        String finalFormatedTime = fromSecondsToTime(resultInSeconds);
-
-        return finalFormatedTime;
-    }
-
-    public static String fromSecondsToTime(int segundos) {
-
-        //Funcion que recibe segundos en un entero y devuelve dichos segundos en en el siguiente formato HH:MM:SS
-
-        //Primero calculamos las horas, minutos y segundos que equivalen a la cantidad de segundos
-        String hours = format2numbers(Integer.toString(segundos/3600));
-        segundos = segundos%3600;
-        String minutes = format2numbers(Integer.toString(segundos/60));
-        String seconds = format2numbers(Integer.toString(segundos%60));
-
-        return hours + ":" + minutes + ":" + seconds;
-
-    }
-    public static String format2numbers(String number) {
-        if (number.length()<2) {
-            return "0" + number;
-        } else {
-            return number;
-        }
+        //Se pasan los milisegundos a HH:mm:ss
+        return String.format("%1$tH:%1$tM:%1$tS", difference);
     }
     /******** FIN DATE METHODS ********/
 
-    /******** USER METHODS ********/
+    /******** BUSCADOR USER METHODS ********/
 
-    public static ArrayList<User> getUsersBy(String campo, String valor) {
+    /**
+     * Se muestran todos los usuarios si no se ha introducido nada,
+     * de lo contrario, buscará el trabajador por el username
+     * @param username
+     * @return
+     */
+    public static ArrayList<User> getUsersByUsername(String username) {
+        ArrayList<User> listUser = new ArrayList<>();
 
-        ArrayList<User> usersArray = new ArrayList<>();
+        DBHelper dbHelper = new DBHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        try {
-            String FILE_NAME = "/usersFile.dat";
-            File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
-            User usuario = (User) entrada.readObject();
+        if (!username.equals("")) {
+            Cursor cursor = db.query(
+                    DBDesign.DBEntry.TABLE_USER,
+                    null,
+                    DBDesign.DBEntry.TU_C3_USERNAME + "=?",
+                    new String[]{username},
+                    null,
+                    null,
+                    null);
 
-            while (usuario!=null) {
-
-                switch (campo) {
-                    case "idU":
-                        if (usuario.getIdU().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    case "rol":
-                        if (usuario.getRol().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    case "username":
-                        if (usuario.getUsername().equals(valor)) {
-                            usersArray.add(usuario);
-                        }
-                        break;
-                    default:
-                        usersArray.add(usuario);
-                }
-
-                usuario = (User) entrada.readObject();
-
+            while (cursor.moveToNext()) {
+                User user = new User(
+                        cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                );
+                listUser.add(user);
             }
-            entrada.close();
-        } catch (EOFException ignored) {
-        } catch (IndexOutOfBoundsException | NullPointerException | ClassNotFoundException | IOException e) {
-            e.printStackTrace();
+            cursor.close();
+
+        } else {
+            Cursor cursor = db.query(
+                    DBDesign.DBEntry.TABLE_USER,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null);
+
+            while (cursor.moveToNext()) {
+                User user = new User(
+                        cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                );
+                listUser.add(user);
+            }
+            cursor.close();
         }
 
-        return usersArray;
-    };
+        return listUser;
+    }
+    /******** FIN BUSCADOR USER METHODS ********/
 
+    /******** MY REGISTERS METHODS ********/
 
-    /******** FIN USER METHODS ********/
+    /**
+     * Listado de registros donde el id es el del usuario en sesion,
+     * se muestran los registros en orden descendente
+     * @param idSession
+     * @return
+     */
+    public static ArrayList<Registro> getListRegistros(String idSession) {
+        ArrayList<Registro> listRegistros = new ArrayList<>();
 
-    /******** USER'S REGISTERS METHODS ********/
+        Cursor cursor = db.query(
+                DBDesign.DBEntry.TABLE_REGISTRO,
+                null,
+                DBDesign.DBEntry.TR_C6_ID_TRABAJADOR + "=?",
+                new String[]{idSession},
+                null,
+                null,
+                DBDesign.DBEntry.TR_C1_ID + " DESC");
 
-    public static ArrayList<Registro> getRegisters(String uid) {
-        ArrayList<Registro> registros = new ArrayList<>();
-        String FILE_NAME = "/" + uid + ".dat";
-
-        File file = new File(context.getFilesDir().getPath()+FILE_NAME);
-
-        try {
-            ObjectInputStream entrada = new ObjectInputStream(new FileInputStream(file));
-            registros = (ArrayList<Registro>) entrada.readObject();
-            entrada.close();
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        while (cursor.moveToNext()) {
+            Registro registro = new Registro(
+                    cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TR_C1_ID)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C2_FECHA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C3_HORA_ENTRADA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C4_HORA_SALIDA)),
+                    cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TR_C5_HORAS_DIA)),
+                    cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TR_C6_ID_TRABAJADOR))
+            );
+            listRegistros.add(registro);
         }
-
-
-        return registros;
+        cursor.close();
+        return listRegistros;
     }
 
+    /******** FIN MY REGISTERS METHODS ********/
 
-    /******** FIN USER'S REGISTERS METHODS ********/
+    /********* GESTIONAR TRABAJADORES METHODS *********/
+
+    /**
+     * Se añade el nuevo trabajador si el username no esta ya registrado
+     * @param user
+     * @param pass
+     */
+    public static void addNewWorker(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+        if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
+            Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
+        } else {
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
+
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String username = cursor.getString(2);
+                    String password = cursor.getString(3);
+
+                    Toast.makeText(context, "User " + username + " already exists", Toast.LENGTH_SHORT).show();
+                } while(cursor.moveToNext());
+            } else {
+                ContentValues values = new ContentValues();
+                //values.put(DBDesign.DBEntry.TU_C1_ID, 1);
+                values.put(DBDesign.DBEntry.TU_C2_ROL, "trabajador");
+                values.put(DBDesign.DBEntry.TU_C3_USERNAME, user);
+                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(pass));
+                db.insert(DBDesign.DBEntry.TABLE_USER, null, values);
+
+                Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
+    /**
+     * Se puede actualizar el nombre, la contraseña o el rol del trabajador
+     * @param username
+     * @param newUsername
+     * @param newPwd
+     * @param userRol
+     */
+    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+        if (TextUtils.isEmpty(username) && TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
+            Toast.makeText(context, "Form is empty", Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(username)) {
+            Toast.makeText(context, "Username is required", Toast.LENGTH_SHORT).show();
+        } else {
+            //Se mira si existe el usuario introducido
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
+
+            if (cursor.moveToFirst()){
+                do {
+                    // Passing values
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String userName = cursor.getString(2);
+                    String password = cursor.getString(3);
+
+                    // Update
+                    ContentValues updateValues = new ContentValues();
+
+                    //Si los campos de nuevo nombre y nueva contraseña estan vacios, solo se actualiza el rol
+                    if (TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
+
+                        Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
+                    //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
+                    } else if (TextUtils.isEmpty(newUsername)) {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
+
+                        Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                    //Si el campo de nuevo contraseá esta vacio, solo se actualiza el nombre y el rol
+                    } else if (TextUtils.isEmpty(newPwd)) {
+
+                        //Se mira si ya existe el nuevo nombre
+                        Cursor cursor2 = db.rawQuery("Select * from user where username=?", new String[]{newUsername});
+                        if (cursor2.moveToFirst()){
+                            do {
+                                // Passing values
+                                String uid2 = cursor2.getString(0);
+                                String rol2 = cursor2.getString(1);
+                                String userName2 = cursor2.getString(2);
+                                String password2 = cursor2.getString(3);
+
+                                if (userName2.equals(newUsername)) {
+                                    Toast.makeText(context, "User " + userName + " already exists", Toast.LENGTH_SHORT).show();
+                                }
+                            } while(cursor.moveToNext());
+                        } else {
+                            updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                            updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
+                            db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
+
+                            Toast.makeText(context, "Username actualizado", Toast.LENGTH_SHORT).show();
+                        }
+                        cursor2.close();
+                    //Si se rellenan todos los campos, se actualiza con todos los campos
+                    } else {
+                        updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
+                        updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
+
+                        Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                    }
+                } while(cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
+    /**
+     * Delete user
+     * @param username
+     */
+    public static void deleteWorker(String username) {
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(context, "Enter username to delete", Toast.LENGTH_SHORT).show();
+        } else {
+            DBHelper dbHelper = new DBHelper(context);
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    // Passing values
+                    String uid = cursor.getString(0);
+                    String rol = cursor.getString(1);
+                    String user = cursor.getString(2);
+                    String pwd = cursor.getString(3);
+
+                    db.delete(DBDesign.DBEntry.TABLE_USER, "_id=?", new String[] {uid});
+
+                    Toast.makeText(context, "User " + user + " deleted", Toast.LENGTH_SHORT).show();
+                } while (cursor.moveToNext());
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            cursor.close();
+            db.close();
+        }
+    }
+
+    /********* FIN GESTIONAR TRABAJADORES METHODS *********/
 }

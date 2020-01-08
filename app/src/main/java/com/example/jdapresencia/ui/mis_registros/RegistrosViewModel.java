@@ -23,6 +23,6 @@ public class RegistrosViewModel extends ViewModel {
     }
 
     public ArrayList<Registro> getListRegistros(String idSession) {
-        return MVVMRepository.getRegisters(idSession);
+        return MVVMRepository.getListRegistros(idSession);
     }
 }

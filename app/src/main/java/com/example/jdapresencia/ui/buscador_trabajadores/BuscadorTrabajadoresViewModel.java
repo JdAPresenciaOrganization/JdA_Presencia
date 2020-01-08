@@ -2,6 +2,7 @@ package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import androidx.lifecycle.ViewModel;
 
+import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 import com.example.jdapresencia.MVVMRepository;
 
@@ -14,14 +15,13 @@ public class BuscadorTrabajadoresViewModel extends ViewModel {
         //mText.setValue("Este es el buscador de trabajadores");
     //}
 
-    //public void pasarContexto(Context context) {
-    //    this.context = context;
-    //    }
+    public ArrayList<User> getUsersByUsername(String username) {
+        return MVVMRepository.getUsersByUsername(username);
+    }
 
-    public ArrayList<User> getUsersBy( String campo, String valor) {
-
-        return MVVMRepository.getUsersBy(campo, valor);
-    };
+    public ArrayList<Registro> getListRegistros(String idSession) {
+        return MVVMRepository.getListRegistros(idSession);
+    }
 
     //public LiveData<String> getText() {
     //    return mText;

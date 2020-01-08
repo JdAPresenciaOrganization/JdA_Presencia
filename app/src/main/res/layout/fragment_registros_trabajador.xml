@@ -3,65 +3,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.buscador_trabajadores.registros_trabajador.RegistrosTrabajadorFragment">
+    tools:context=".ui.buscador_trabajadores.RegistrosTrabajadorFragment">
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_alignParentTop="true"
-        android:background="@color/cardview_light_background"
-        android:layout_gravity="center"
-        android:gravity="center">
+    <TextView
+        android:id="@+id/header_fecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:textStyle="bold"
+        android:text="Fecha" />
 
-        <TextView
-            android:id="@+id/header_fecha"
-            android:layout_width="65dp"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
-            android:text="Fecha"
-            android:textStyle="bold"
-            android:textSize="14dp"
-            android:textAlignment="center"/>
-        <TextView
-            android:id="@+id/header_entrada"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/header_fecha"
-            android:layout_marginLeft="20dp"
-            android:text="Hora entrada"
-            android:textStyle="bold"
-            android:textSize="14dp"/>
-        <TextView
-            android:id="@+id/header_salida"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/header_entrada"
-            android:layout_marginLeft="10dp"
-            android:text="Hora salida"
-            android:textStyle="bold"
-            android:textSize="14dp"/>
-        <TextView
-            android:id="@+id/header_duracion"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:text="Duración jornada"
-            android:textStyle="bold"
-            android:textSize="14dp"/>
+    <TextView
+        android:id="@+id/header_entrada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/header_fecha"
+        android:layout_marginLeft="45dp"
+        android:textStyle="bold"
+        android:text="Entrada" />
 
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/header_salida"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/header_entrada"
+        android:layout_marginLeft="35dp"
+        android:textStyle="bold"
+        android:text="Salida" />
 
-
+    <TextView
+        android:id="@+id/header_duracion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/header_salida"
+        android:layout_marginLeft="35dp"
+        android:textStyle="bold"
+        android:text="Duración" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewRegistros"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="30dp"/>
-
-
 
 </RelativeLayout>
