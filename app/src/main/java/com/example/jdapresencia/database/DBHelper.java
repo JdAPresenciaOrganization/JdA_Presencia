@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "jdaPresencia.db";
 
     public DBHelper(@Nullable Context context) {
-        super(context, DATABASE_NAME, null, 11);
+        super(context, DATABASE_NAME, null, 13);
     }
 
     @Override
