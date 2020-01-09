@@ -12,11 +12,6 @@ import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,10 +23,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 
 public class MVVMRepository {
 
@@ -57,13 +48,13 @@ public class MVVMRepository {
      * @param user
      * @param pass
      */
-    public static void checkLogin(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, IOException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public static void checkLogin(String user, String pass) {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
         } else {
             DBHelper dbHelper = new DBHelper(context);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
+            Cursor cursor = db.rawQuery("Select * from user where username=? and password=?", new String[]{user, pass});
 
             if (cursor.moveToFirst()){
                 do {
@@ -74,12 +65,12 @@ public class MVVMRepository {
                     String password = cursor.getString(3);
 
                     //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
-                    if (pass.equals(decrypt(password))) {
+                    //if (pass.equals(decrypt(password))) {
                         //Se pasa el id y el rol de usuario
                         LoginActivity.loginSuccess(uid, rol);
-                    } else {
-                        Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
-                    }
+                    //} else {
+                    //    Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                    //}
                 } while(cursor.moveToNext());
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
@@ -87,59 +78,6 @@ public class MVVMRepository {
             cursor.close();
             db.close();
         }
-    }
-
-    /**
-     * Encirptación de la contraseña
-     * @param pwd
-     * @return
-     * @throws IllegalBlockSizeException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchPaddingException
-     * @throws InvalidKeySpecException
-     * @throws NoSuchProviderException
-     */
-    public static String encrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, NoSuchProviderException {
-        RSA rsa = new RSA();
-        //le asignamos el Contexto
-        rsa.setContext(context);
-        //Generamos un juego de claves
-        rsa.genKeyPair(1024);
-        //Guardamos en la memoria las claves
-        rsa.saveToDiskPrivateKey("rsa.pri");
-        rsa.saveToDiskPublicKey("rsa.pub");
-        //Ciframos
-        String encode_text = rsa.Encrypt(pwd);
-
-        return encode_text;
-    }
-
-    /**
-     * Desencriptación de la contraseña
-     * @param pwd
-     * @return
-     * @throws IllegalBlockSizeException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws NoSuchPaddingException
-     * @throws InvalidKeySpecException
-     * @throws IOException
-     */
-    public static String decrypt(String pwd) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException, IOException {
-        //Creamos otro objeto de nuestra clase RSA
-        RSA rsa2 = new RSA();
-        //Le pasamos el contexto
-        rsa2.setContext(context);
-        //Cargamos las claves que creamos anteriormente
-        rsa2.openFromDiskPrivateKey("rsa.pri");
-        rsa2.openFromDiskPublicKey("rsa.pub");
-        //Desciframos
-        String decode_text = rsa2.Decrypt(pwd);
-
-        return decode_text;
     }
 
     /******** CHECK IN/OUT METHODS ********/
@@ -388,7 +326,7 @@ public class MVVMRepository {
      * @param user
      * @param pass
      */
-    public static void addNewWorker(String user, String pass) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public static void addNewWorker(String user, String pass) {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
         } else {
@@ -411,7 +349,7 @@ public class MVVMRepository {
                 //values.put(DBDesign.DBEntry.TU_C1_ID, 1);
                 values.put(DBDesign.DBEntry.TU_C2_ROL, "trabajador");
                 values.put(DBDesign.DBEntry.TU_C3_USERNAME, user);
-                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(pass));
+                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, pass);
                 db.insert(DBDesign.DBEntry.TABLE_USER, null, values);
 
                 Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
@@ -428,7 +366,7 @@ public class MVVMRepository {
      * @param newPwd
      * @param userRol
      */
-    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) throws BadPaddingException, NoSuchAlgorithmException, IllegalBlockSizeException, NoSuchProviderException, NoSuchPaddingException, InvalidKeyException, InvalidKeySpecException {
+    public static void updateWorker(String username, String newUsername, String newPwd, String userRol) {
         if (TextUtils.isEmpty(username) && TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
             Toast.makeText(context, "Form is empty", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(username)) {
@@ -459,7 +397,7 @@ public class MVVMRepository {
                     //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
                     } else if (TextUtils.isEmpty(newUsername)) {
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
                         db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
@@ -492,7 +430,7 @@ public class MVVMRepository {
                     } else {
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
                         updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, encrypt(newPwd));
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
                         db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
