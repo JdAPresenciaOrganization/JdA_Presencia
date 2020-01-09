@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -38,12 +39,12 @@ public class HomeAdminFragment extends Fragment {
         webView.getSettings().setJavaScriptEnabled(true);
 
         MiHilo miHilo = new MiHilo();
-        miHilo.execute("https://www.google.com");
+        miHilo.execute("https://agora.xtec.cat/insjoandaustria/");
 
         homeAdminViewModel.getWeb().observe(this, new Observer<String>() {
             @Override
             public void onChanged(String html) {
-                webView.loadData(html,"text/html", "utf-8");
+                webView.loadData(html,"text/html; charset=utf-8", "utf-8");
             }
         });
 

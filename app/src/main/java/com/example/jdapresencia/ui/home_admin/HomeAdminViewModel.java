@@ -47,7 +47,7 @@ public class HomeAdminViewModel extends ViewModel {
             String line;
 
             while ((line = bufferedReader.readLine()) != null) {
-                result.append(line + "/n");
+                result.append(line);
             }
             /*
             InputStream inputStream = connection.getInputStream();
