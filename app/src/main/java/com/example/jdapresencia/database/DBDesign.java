@@ -12,6 +12,7 @@ public class DBDesign {
         public static final String TU_C2_ROL = "rol";
         public static final String TU_C3_USERNAME = "username";
         public static final String TU_C4_PASSWORD = "password";
+        public static final String TU_C5_PWD_SALT = "salt";
 
         public static final String TABLE_REGISTRO = "registro";
         public static final String TR_C1_ID = "_id";
@@ -27,7 +28,8 @@ public class DBDesign {
                     DBEntry.TU_C1_ID + " INTEGER primary key autoincrement," +
                     DBEntry.TU_C2_ROL + " TEXT," +
                     DBEntry.TU_C3_USERNAME + " TEXT," +
-                    DBEntry.TU_C4_PASSWORD + " TEXT)";
+                    DBEntry.TU_C4_PASSWORD + " TEXT,"+
+                    DBEntry.TU_C5_PWD_SALT + " TEXT)";
 
     public static final String SQL_CRATE_REGISTRO_ENTRIES =
             "CREATE TABLE " + DBEntry.TABLE_REGISTRO + " (" +

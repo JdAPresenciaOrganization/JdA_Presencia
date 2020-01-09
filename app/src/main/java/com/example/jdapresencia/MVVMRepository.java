@@ -54,7 +54,7 @@ public class MVVMRepository {
         } else {
             DBHelper dbHelper = new DBHelper(context);
             SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor cursor = db.rawQuery("Select * from user where username=? and password=?", new String[]{user, pass});
+            Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
                 do {
@@ -63,14 +63,15 @@ public class MVVMRepository {
                     String rol = cursor.getString(1);
                     String username = cursor.getString(2);
                     String password = cursor.getString(3);
+                    String pwd_salt = cursor.getString(4);
 
                     //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
-                    //if (pass.equals(decrypt(password))) {
-                        //Se pasa el id y el rol de usuario
+                    boolean passwordMatch = PasswordUtils.verifyUserPassword(pass, password, pwd_salt);
+                    if (passwordMatch) {
                         LoginActivity.loginSuccess(uid, rol);
-                    //} else {
-                    //    Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
-                    //}
+                    } else {
+                        Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                    }
                 } while(cursor.moveToNext());
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
@@ -250,7 +251,8 @@ public class MVVMRepository {
                         cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
                         cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
                         cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
-                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C5_PWD_SALT))
                 );
                 listUser.add(user);
             }
@@ -271,7 +273,8 @@ public class MVVMRepository {
                         cursor.getInt(cursor.getColumnIndex(DBDesign.DBEntry.TU_C1_ID)),
                         cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C2_ROL)),
                         cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C3_USERNAME)),
-                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD))
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C4_PASSWORD)),
+                        cursor.getString(cursor.getColumnIndex(DBDesign.DBEntry.TU_C5_PWD_SALT))
                 );
                 listUser.add(user);
             }
@@ -346,10 +349,12 @@ public class MVVMRepository {
                 } while(cursor.moveToNext());
             } else {
                 ContentValues values = new ContentValues();
+                String salt = PasswordUtils.getSalt(30);
                 //values.put(DBDesign.DBEntry.TU_C1_ID, 1);
                 values.put(DBDesign.DBEntry.TU_C2_ROL, "trabajador");
                 values.put(DBDesign.DBEntry.TU_C3_USERNAME, user);
-                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, pass);
+                values.put(DBDesign.DBEntry.TU_C4_PASSWORD, PasswordUtils.generateSecurePassword(pass, salt));
+                values.put(DBDesign.DBEntry.TU_C5_PWD_SALT, salt);
                 db.insert(DBDesign.DBEntry.TABLE_USER, null, values);
 
                 Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
@@ -396,12 +401,14 @@ public class MVVMRepository {
                         Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
                     //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
                     } else if (TextUtils.isEmpty(newUsername)) {
+                        String salt = PasswordUtils.getSalt(30);
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, PasswordUtils.generateSecurePassword(newPwd, salt));
+                        updateValues.put(DBDesign.DBEntry.TU_C5_PWD_SALT, salt);
                         db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
-                    //Si el campo de nuevo contraseá esta vacio, solo se actualiza el nombre y el rol
+                    //Si el campo de nuevo contraseña esta vacio, solo se actualiza el nombre y el rol
                     } else if (TextUtils.isEmpty(newPwd)) {
 
                         //Se mira si ya existe el nuevo nombre
@@ -428,9 +435,11 @@ public class MVVMRepository {
                         cursor2.close();
                     //Si se rellenan todos los campos, se actualiza con todos los campos
                     } else {
+                        String salt = PasswordUtils.getSalt(30);
                         updateValues.put(DBDesign.DBEntry.TU_C2_ROL, userRol.toLowerCase());
                         updateValues.put(DBDesign.DBEntry.TU_C3_USERNAME, newUsername);
-                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, newPwd);
+                        updateValues.put(DBDesign.DBEntry.TU_C4_PASSWORD, PasswordUtils.generateSecurePassword(newPwd, salt));
+                        updateValues.put(DBDesign.DBEntry.TU_C5_PWD_SALT, salt);
                         db.update(DBDesign.DBEntry.TABLE_USER, updateValues, "_id="+uid, null);
 
                         Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();

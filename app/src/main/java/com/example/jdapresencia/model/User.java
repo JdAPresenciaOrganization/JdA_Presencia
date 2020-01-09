@@ -3,13 +3,14 @@ package com.example.jdapresencia.model;
 public class User {
 
     int idU;
-    String rol, username, password;
+    String rol, username, password, salt;
 
-    public User(int idU, String rol, String username, String password) {
+    public User(int idU, String rol, String username, String password, String salt) {
         this.idU = idU;
         this.rol = rol;
         this.username = username;
         this.password = password;
+        this.salt = salt;
     }
 
     public int getIdU() {
@@ -42,5 +43,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 }
