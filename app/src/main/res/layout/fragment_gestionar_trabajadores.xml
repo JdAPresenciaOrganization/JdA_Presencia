@@ -70,18 +70,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/button_rounded_border"
-            android:gravity="center"
+            android:background="@drawable/button_rounded_modify"
             android:text="modify"
-            android:textColor="#000" />
+            android:gravity="center" />
 
         <Button
             android:id="@+id/button_deleteUser"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@drawable/button_rounded_border"
+            android:background="@drawable/button_rounded_delete"
             android:text="delete"
+            android:layout_marginLeft="10dp"
             android:gravity="center" />
     </LinearLayout>
 

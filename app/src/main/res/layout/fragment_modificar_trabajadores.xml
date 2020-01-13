@@ -88,7 +88,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="32dp"
-        android:background="@drawable/button_rounded"
+        android:background="@drawable/button_rounded_modify"
         android:text="Modify worker"
         android:textColor="#fff"
         app:layout_constraintEnd_toEndOf="parent"
