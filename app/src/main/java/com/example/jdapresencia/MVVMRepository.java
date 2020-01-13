@@ -34,6 +34,7 @@ public class MVVMRepository {
     private MVVMRepository(Context context){
         this.context = context;
         DBHelper dbHelper = new DBHelper(context);
+        //Permite escribir y leer
         db = dbHelper.getWritableDatabase();
     }
     public static MVVMRepository get(Context context){
@@ -41,6 +42,10 @@ public class MVVMRepository {
             srepository = new MVVMRepository(context);
         }
         return srepository;
+    }
+
+    public static void closeDatabase(){
+        db.close();
     }
 
     /**
@@ -52,8 +57,6 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
         } else {
-            DBHelper dbHelper = new DBHelper(context);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
@@ -77,7 +80,6 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
-            db.close();
         }
     }
 
@@ -85,8 +87,6 @@ public class MVVMRepository {
 
     public static void userCheckIn(String idSession) {
 
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
                 new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
@@ -119,13 +119,10 @@ public class MVVMRepository {
             }
         }
         cursor.close();
-        db.close();
     }
 
     public static void userCheckOut(String idSession) {
 
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
                 new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
@@ -155,7 +152,6 @@ public class MVVMRepository {
             Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
         }
         cursor.close();
-        db.close();
     }
     /******** FIN CHECK IN/OUT METHODS ********/
 
@@ -232,9 +228,6 @@ public class MVVMRepository {
      */
     public static ArrayList<User> getUsersByUsername(String username) {
         ArrayList<User> listUser = new ArrayList<>();
-
-        DBHelper dbHelper = new DBHelper(context);
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         if (!username.equals("")) {
             Cursor cursor = db.query(
@@ -333,8 +326,6 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
         } else {
-            DBHelper dbHelper = new DBHelper(context);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
@@ -360,7 +351,6 @@ public class MVVMRepository {
                 Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
-            db.close();
         }
     }
 
@@ -378,8 +368,6 @@ public class MVVMRepository {
             Toast.makeText(context, "Username is required", Toast.LENGTH_SHORT).show();
         } else {
             //Se mira si existe el usuario introducido
-            DBHelper dbHelper = new DBHelper(context);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
 
             if (cursor.moveToFirst()){
@@ -449,7 +437,6 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
-            db.close();
         }
     }
 
@@ -461,8 +448,6 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter username to delete", Toast.LENGTH_SHORT).show();
         } else {
-            DBHelper dbHelper = new DBHelper(context);
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
 
             if (cursor.moveToFirst()) {
@@ -481,7 +466,6 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
-            db.close();
         }
     }
 

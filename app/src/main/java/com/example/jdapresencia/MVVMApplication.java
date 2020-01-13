@@ -9,4 +9,10 @@ public class MVVMApplication extends Application {
         super.onCreate();
         MVVMRepository.get(this);
     }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        MVVMRepository.closeDatabase();
+    }
 }
