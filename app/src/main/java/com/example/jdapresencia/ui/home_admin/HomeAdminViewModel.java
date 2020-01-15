@@ -40,6 +40,7 @@ public class HomeAdminViewModel extends ViewModel {
         //result ="";
 
         try {
+            //Se abre la conexión con HTTPS y se lee el contenido linea por linea
             url = new URL(web);
             connection = (HttpsURLConnection) url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -62,6 +63,7 @@ public class HomeAdminViewModel extends ViewModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //El resultado se guarda en la variable MutableLiveData mWeb
         Log.i("RESULT", result.toString());
         mWeb.postValue(result.toString());
     }

@@ -35,9 +35,11 @@ public class HomeAdminFragment extends Fragment {
             }
         });
          */
+        //Variable de tipo WebView
         final WebView webView = root.findViewById(R.id.webview);
         webView.getSettings().setJavaScriptEnabled(true);
 
+        //Se instancia la clase y se pasa la URL de la página
         MiHilo miHilo = new MiHilo();
         miHilo.execute("https://agora.xtec.cat/insjoandaustria/");
 
@@ -51,6 +53,7 @@ public class HomeAdminFragment extends Fragment {
         return root;
     }
 
+    //Clase que extiende AsyncTask que escucha la respuesta de downloadURL
     public class MiHilo extends AsyncTask<String,Void,String> {
 
         @Override
