@@ -79,7 +79,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
 
         @Override
         public ViewHolder onCreateViewHolder (ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_buscador_trabajadores, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_buscador_trabajadores, parent, false);
             return new ViewHolder(v);
         }
 

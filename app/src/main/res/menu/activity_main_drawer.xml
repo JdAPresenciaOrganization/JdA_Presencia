@@ -31,8 +31,8 @@
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="@string/menu_send"
-                android:visible="false"/>
+                android:title="@string/menu_send" />
+                <!--android:visible="false"-->
         </menu>
     </item>
 
