@@ -5,12 +5,16 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jdapresencia.database.DBDesign;
 import com.example.jdapresencia.database.DBHelper;
+import com.example.jdapresencia.model.Mensaje;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -470,4 +474,39 @@ public class MVVMRepository {
     }
 
     /********* FIN GESTIONAR TRABAJADORES METHODS *********/
+
+    /***************** FIREBASE METHODS *******************/
+
+    /**
+     * Se consigue el usuario con el id de la sesión y se escribe en firebase
+     * @param msg
+     * @param idSession
+     */
+    public static void WriteMsgFirebase(EditText msg, String idSession) {
+        Cursor cursor = db.rawQuery("Select username from user where _id=?", new String[]{idSession});
+
+        String username = "";
+
+        if (cursor.moveToFirst()){
+            do {
+                // Passing values
+                username = cursor.getString(0);
+            } while(cursor.moveToNext());
+        }
+        cursor.close();
+
+        // Read the input field and push a new instance of ChatMessage to the Firebase database
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("JdAP")
+                .child("mensajes")
+                .push()
+                .setValue(new Mensaje(username, "admin", msg.getText().toString(), Integer.parseInt(idSession))
+                );
+
+        // Clear the input
+        msg.setText("");
+    }
+
+    /**************** FIN FIREBASE METHODS ****************/
 }

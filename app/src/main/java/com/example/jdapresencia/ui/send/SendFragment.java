@@ -1,5 +1,6 @@
 package com.example.jdapresencia.ui.send;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,11 +41,15 @@ public class SendFragment extends Fragment {
             }
         });
 
+        //Captura el id del usuario logueado enviado del MainActivity
+        SharedPreferences pref = getActivity().getPreferences(getActivity().MODE_PRIVATE);
+        final String idSession = pref.getString("sessionUserId_key", "");
+
         btnSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!sendMsg.getText().toString().isEmpty()) {
-                    sendViewModel.WriteMsgFirebase(sendMsg.getText().toString());
+                    sendViewModel.WriteMsgFirebase(sendMsg, idSession);
                 } else {
                     Toast.makeText(getContext(), "Insert message", Toast.LENGTH_SHORT).show();
                 }

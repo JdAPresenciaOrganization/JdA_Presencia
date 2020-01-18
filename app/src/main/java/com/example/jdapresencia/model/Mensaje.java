@@ -4,12 +4,11 @@ import java.util.Date;
 
 public class Mensaje {
 
-    int id, id_trabajador;
+    int id_trabajador;
     String emisor, receptor, mensaje;
     long messageTime;
 
-    public Mensaje(int id, String emisor, String receptor, String mensaje, int id_trabajador) {
-        this.id = id;
+    public Mensaje(String emisor, String receptor, String mensaje, int id_trabajador) {
         this.emisor = emisor;
         this.receptor = receptor;
         this.mensaje = mensaje;
@@ -21,14 +20,6 @@ public class Mensaje {
 
     public Mensaje(){
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public int getId_trabajador() {
