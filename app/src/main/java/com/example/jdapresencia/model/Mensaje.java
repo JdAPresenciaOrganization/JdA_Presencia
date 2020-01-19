@@ -15,7 +15,9 @@ public class Mensaje {
         this.id_trabajador = id_trabajador;
 
         // Initialize to current time
-        messageTime = new Date().getTime();
+        Date date = new Date();
+        date.setHours(date.getHours() + 1);
+        messageTime = date.getTime();
     }
 
     public Mensaje(){
