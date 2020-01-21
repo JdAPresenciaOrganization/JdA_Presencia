@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.jdapresencia.database.AppDatabase;
 import com.example.jdapresencia.database.DBDesign;
 import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Mensaje;
@@ -32,6 +33,7 @@ public class MVVMRepository {
 
     private static Context context;
     private static SQLiteDatabase db;
+    private static AppDatabase dbb;
     //Singleton
     private static MVVMRepository srepository;
 
@@ -50,6 +52,36 @@ public class MVVMRepository {
 
     public static void closeDatabase(){
         db.close();
+    }
+
+    /**
+     * Se crea un admin y trabajador por defecto
+     */
+    public static void initUserTable() {
+        dbb = AppDatabase.getFileDatabase(context);
+        int cont = dbb.getUserDao().getUsersCount();
+
+        if (cont == 0) {
+            User user1 = new User();
+            String salt = PasswordUtils.getSalt(30);
+
+            user1.setRol("admin");
+            user1.setUsername("admin");
+            user1.setPassword(PasswordUtils.generateSecurePassword("1234", salt));
+            user1.setSalt(salt);
+
+            dbb.getUserDao().insertUser(user1);
+
+            User user2 = new User();
+            String salt2 = PasswordUtils.getSalt(30);
+
+            user2.setRol("trabajador");
+            user2.setUsername("worker");
+            user2.setPassword(PasswordUtils.generateSecurePassword("test", salt2));
+            user2.setSalt(salt2);
+
+            dbb.getUserDao().insertUser(user2);
+        }
     }
 
     /**

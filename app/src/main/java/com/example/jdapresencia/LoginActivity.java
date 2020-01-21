@@ -23,6 +23,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        //Se crea admin y trabajador por defecto
+        initUserTable();
+
         mContext = this;
         //Recoger valores del layout en variables
         user = findViewById(R.id.username);
@@ -47,5 +50,9 @@ public class LoginActivity extends AppCompatActivity {
         intent.putExtra("idSession_key", sessionUserId);
         intent.putExtra("rol_key", userType);
         mContext.startActivity(intent);
+    }
+
+    protected void initUserTable() {
+        MVVMRepository.initUserTable();
     }
 }
