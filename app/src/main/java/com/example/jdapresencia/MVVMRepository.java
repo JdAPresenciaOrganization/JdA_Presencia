@@ -42,6 +42,8 @@ public class MVVMRepository {
         DBHelper dbHelper = new DBHelper(context);
         //Permite escribir y leer
         db = dbHelper.getWritableDatabase();
+        //Room SQLite
+        dbb = AppDatabase.getFileDatabase(context);
     }
     public static MVVMRepository get(Context context){
         if (srepository == null){
@@ -54,11 +56,14 @@ public class MVVMRepository {
         db.close();
     }
 
+    public static void closeDatabaseInstance(){
+        AppDatabase.destroyInstance();
+    }
+
     /**
      * Se crea un admin y trabajador por defecto
      */
     public static void initUserTable() {
-        dbb = AppDatabase.getFileDatabase(context);
         int cont = dbb.getUserDao().getUsersCount();
 
         if (cont == 0) {

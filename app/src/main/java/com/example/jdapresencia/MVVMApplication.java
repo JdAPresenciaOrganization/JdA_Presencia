@@ -14,5 +14,6 @@ public class MVVMApplication extends Application {
     public void onTerminate() {
         super.onTerminate();
         MVVMRepository.closeDatabase();
+        MVVMRepository.closeDatabaseInstance();
     }
 }
