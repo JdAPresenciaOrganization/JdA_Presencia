@@ -207,6 +207,27 @@ public class MVVMRepository {
 
     public static void userCheckOut(String idSession) {
 
+        Registro registroCheck =
+                dbb.getRegistroDao().gerRegistroHoy(getDiaActual(fechaActualDiaHora()), idSession);
+
+        //TODO no se hace update
+        if (registroCheck != null) {
+            // Passing values
+            int idR = registroCheck.getIdR();
+            String hSalida = registroCheck.getHoraSalida();
+
+            //Update con la fecha de salida
+            if (hSalida.equals("")) {
+                dbb.getRegistroDao().updateRegistroSalida(hSalida, idR);
+                Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "Registro del día ya finalizado", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(context, "¡Aún no has hecho check in hoy!", Toast.LENGTH_SHORT).show();
+        }
+
+        /*
         Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
                 new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
@@ -236,6 +257,7 @@ public class MVVMRepository {
             Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
         }
         cursor.close();
+        */
     }
     /******** FIN CHECK IN/OUT METHODS ********/
 

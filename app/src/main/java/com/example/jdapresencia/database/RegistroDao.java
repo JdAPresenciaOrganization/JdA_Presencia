@@ -26,4 +26,8 @@ public interface RegistroDao {
 
     @Insert
     void insertRegistro(Registro obj);
+
+    @Query("UPDATE " + Registro.TABLE_NAME + " SET " + Registro.TR_C4_HORA_SALIDA + " = :hSalida " +
+            " WHERE " + Registro.COLUMN_ID + " = :id")
+    void updateRegistroSalida(String hSalida, int id);
 }
