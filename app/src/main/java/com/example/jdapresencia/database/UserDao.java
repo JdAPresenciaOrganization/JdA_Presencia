@@ -22,4 +22,7 @@ public interface UserDao {
 
     @Insert
     void insertUser(User obj);
+
+    @Query("DELETE FROM " + User.TABLE_NAME + " WHERE " + User.TU_C3_USERNAME + " = :username")
+    void deleteByUsername(String username);
 }

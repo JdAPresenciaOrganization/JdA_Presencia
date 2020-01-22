@@ -532,6 +532,16 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(context, "Enter username to delete", Toast.LENGTH_SHORT).show();
         } else {
+            User userCheck = dbb.getUserDao().getUserByUsername(username);
+
+            if (userCheck != null) {
+                dbb.getUserDao().deleteByUsername(username);
+                Toast.makeText(context, "User " + userCheck.getUsername() + " deleted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+
+            /*
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
 
             if (cursor.moveToFirst()) {
@@ -550,6 +560,7 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
+            */
         }
     }
 
