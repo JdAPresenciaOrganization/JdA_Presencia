@@ -13,7 +13,7 @@ public class MVVMApplication extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
-        MVVMRepository.closeDatabase();
+        //MVVMRepository.closeDatabase();
         MVVMRepository.closeDatabaseInstance();
     }
 }

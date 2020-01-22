@@ -3,6 +3,7 @@ package com.example.jdapresencia.database;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.jdapresencia.model.Registro;
 
@@ -27,7 +28,6 @@ public interface RegistroDao {
     @Insert
     void insertRegistro(Registro obj);
 
-    @Query("UPDATE " + Registro.TABLE_NAME + " SET " + Registro.TR_C4_HORA_SALIDA + " = :hSalida " +
-            " WHERE " + Registro.COLUMN_ID + " = :id")
-    void updateRegistroSalida(String hSalida, int id);
+    @Update
+    void updateRegistro(Registro... obj);
 }

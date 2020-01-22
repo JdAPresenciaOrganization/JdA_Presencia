@@ -1,16 +1,13 @@
 package com.example.jdapresencia;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jdapresencia.database.AppDatabase;
-import com.example.jdapresencia.database.DBDesign;
 import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Mensaje;
 import com.example.jdapresencia.model.Registro;
@@ -26,23 +23,22 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 public class MVVMRepository {
 
     private static Context context;
-    private static SQLiteDatabase db;
+    //private static SQLiteDatabase db;
     private static AppDatabase dbb;
     //Singleton
     private static MVVMRepository srepository;
 
     private MVVMRepository(Context context){
         this.context = context;
-        DBHelper dbHelper = new DBHelper(context);
+        //DBHelper dbHelper = new DBHelper(context);
         //Permite escribir y leer
-        db = dbHelper.getWritableDatabase();
+        //db = dbHelper.getWritableDatabase();
         //Room SQLite
         dbb = AppDatabase.getFileDatabase(context);
     }
@@ -53,9 +49,11 @@ public class MVVMRepository {
         return srepository;
     }
 
+    /*
     public static void closeDatabase(){
         db.close();
     }
+    */
 
     public static void closeDatabaseInstance(){
         AppDatabase.destroyInstance();
@@ -210,15 +208,14 @@ public class MVVMRepository {
         Registro registroCheck =
                 dbb.getRegistroDao().gerRegistroHoy(getDiaActual(fechaActualDiaHora()), idSession);
 
-        //TODO no se hace update
         if (registroCheck != null) {
             // Passing values
-            int idR = registroCheck.getIdR();
             String hSalida = registroCheck.getHoraSalida();
 
-            //Update con la fecha de salida
+            //Update con la salida
             if (hSalida.equals("")) {
-                dbb.getRegistroDao().updateRegistroSalida(hSalida, idR);
+                registroCheck.setHoraSalida(getHoraActual(fechaActualDiaHora()));
+                dbb.getRegistroDao().updateRegistro(registroCheck);
                 Toast.makeText(context, "Check out done",Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(context, "Registro del día ya finalizado", Toast.LENGTH_SHORT).show();
@@ -521,12 +518,13 @@ public class MVVMRepository {
 
                 //Si los campos de nuevo nombre y nueva contraseña estan vacios, solo se actualiza el rol
                 if (TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
-                    //TODO REVISAR LA QUERY
-                    dbb.getUserDao().updateUserRol(rol, userName);
+                    dbb.getUserDao().updateUserRol(userRol.toLowerCase(), userName);
                     Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
                 //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
                 } else if (TextUtils.isEmpty(newUsername)) {
-                    dbb.getUserDao().updateUserPassword(rol, newPwd, userName);
+                    String salt = PasswordUtils.getSalt(30);
+                    dbb.getUserDao().updateUserPassword(userRol.toLowerCase(),
+                            PasswordUtils.generateSecurePassword(newPwd, salt), salt, userName);
                     Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
                 //Si el campo de nuevo contraseña esta vacio, solo se actualiza el nombre y el rol
                 } else if (TextUtils.isEmpty(newPwd)) {
@@ -536,11 +534,26 @@ public class MVVMRepository {
                     if (userExists != null) {
                         Toast.makeText(context, "User " + newUsername + " already exists", Toast.LENGTH_SHORT).show();
                     } else {
+                        dbb.getUserDao().updateUsername(userRol.toLowerCase(), newUsername, userName);
                         Toast.makeText(context, "Username actualizado", Toast.LENGTH_SHORT).show();
                     }
                 //Si se rellenan todos los campos, se actualiza con todos los campos
                 } else {
-                    Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                    //Se mira si ya existe el nuevo nombre
+                    User userExists = dbb.getUserDao().getUserByUsername(newUsername);
+
+                    if (userExists != null) {
+                        Toast.makeText(context, "User " + newUsername + " already exists", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String salt = PasswordUtils.getSalt(30);
+                        userCheck.setRol(userRol.toLowerCase());
+                        userCheck.setUsername(newUsername);
+                        userCheck.setPassword(PasswordUtils.generateSecurePassword(newPwd, salt));
+                        userCheck.setSalt(salt);
+
+                        dbb.getUserDao().updateUser(userCheck);
+                        Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } else {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
@@ -669,6 +682,7 @@ public class MVVMRepository {
      * @param idSession
      */
     public static void WriteMsgFirebase(EditText msg, String idSession) {
+        /*
         Cursor cursor = db.rawQuery("Select username from user where _id=?", new String[]{idSession});
 
         String username = "";
@@ -680,6 +694,7 @@ public class MVVMRepository {
             } while(cursor.moveToNext());
         }
         cursor.close();
+        */
 
         // Read the input field and push a new instance of ChatMessage to the Firebase database
         FirebaseDatabase.getInstance()
@@ -687,7 +702,7 @@ public class MVVMRepository {
                 .child("JdAP")
                 .child("mensajes")
                 .push()
-                .setValue(new Mensaje(username, "admin", msg.getText().toString(), Integer.parseInt(idSession))
+                .setValue(new Mensaje("", "admin", msg.getText().toString(), Integer.parseInt(idSession))
                 );
 
         // Clear the input

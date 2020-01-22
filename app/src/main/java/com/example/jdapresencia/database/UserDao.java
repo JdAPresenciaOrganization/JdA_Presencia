@@ -3,6 +3,7 @@ package com.example.jdapresencia.database;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.jdapresencia.model.User;
 
@@ -23,6 +24,9 @@ public interface UserDao {
     @Insert
     void insertUser(User obj);
 
+    @Update
+    void updateUser(User... obj);
+
     @Query("DELETE FROM " + User.TABLE_NAME + " WHERE " + User.TU_C3_USERNAME + " = :username")
     void deleteByUsername(String username);
 
@@ -31,6 +35,11 @@ public interface UserDao {
     void updateUserRol(String rol, String username);
 
     @Query("UPDATE " + User.TABLE_NAME + " SET " + User.TU_C2_ROL + " = :rol , " +
-            User.TU_C4_PASSWORD + " = :pwd WHERE " + User.TU_C3_USERNAME + " = :username")
-    void updateUserPassword(String rol, String pwd, String username);
+            User.TU_C4_PASSWORD + " = :pwd , " + User.TU_C5_PWD_SALT + " = :salt " +
+            " WHERE " + User.TU_C3_USERNAME + " = :username")
+    void updateUserPassword(String rol, String pwd, String salt, String username);
+
+    @Query("UPDATE " + User.TABLE_NAME + " SET " + User.TU_C2_ROL + " = :rol , " +
+            User.TU_C3_USERNAME + " = :newUsername WHERE " + User.TU_C3_USERNAME + " = :username")
+    void updateUsername(String rol, String newUsername, String username);
 }
