@@ -111,7 +111,7 @@ public class MVVMRepository {
                 //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
                 boolean passwordMatch = PasswordUtils.verifyUserPassword(pass, password, pwd_salt);
                 if (passwordMatch) {
-                    LoginActivity.loginSuccess(uid, rol);
+                    LoginActivity.loginSuccess(Integer.toString(uid), rol);
                 } else {
                     Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
                 }
@@ -390,6 +390,25 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
         } else {
+            User userCheck = dbb.getUserDao().getUserByUsername(user);
+
+            if (userCheck != null) {
+                Toast.makeText(context, "User " + userCheck.getUsername() + " already exists", Toast.LENGTH_SHORT).show();
+            } else {
+                User user1 = new User();
+                String salt = PasswordUtils.getSalt(30);
+
+                user1.setRol("trabajador");
+                user1.setUsername(user);
+                user1.setPassword(PasswordUtils.generateSecurePassword(pass, salt));
+                user1.setSalt(salt);
+
+                dbb.getUserDao().insertUser(user1);
+
+                Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
+            }
+
+            /*
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
@@ -415,6 +434,7 @@ public class MVVMRepository {
                 Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
+            */
         }
     }
 

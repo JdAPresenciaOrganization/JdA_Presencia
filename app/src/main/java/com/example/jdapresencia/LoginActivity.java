@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
      * @param sessionUserId
      * @param userType
      */
-    public static void loginSuccess(int sessionUserId, String userType) {
+    public static void loginSuccess(String sessionUserId, String userType) {
         Intent intent = new Intent(mContext, MainActivity.class);
         intent.putExtra("idSession_key", sessionUserId);
         intent.putExtra("rol_key", userType);
