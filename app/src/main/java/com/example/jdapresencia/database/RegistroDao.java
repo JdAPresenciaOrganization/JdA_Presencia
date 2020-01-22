@@ -5,7 +5,6 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.jdapresencia.model.Registro;
-import com.example.jdapresencia.model.User;
 
 import java.util.List;
 
@@ -21,6 +20,9 @@ public interface RegistroDao {
     @Query("SELECT * FROM " + Registro.TABLE_NAME + " WHERE " + Registro.TR_C2_FECHA + " = :fechaHoy AND " +
             Registro.TR_C6_ID_TRABAJADOR + " = :idSession")
     Registro gerRegistroHoy(String fechaHoy, String idSession);
+
+    @Query("SELECT * FROM " + Registro.TABLE_NAME + " WHERE " + Registro.TR_C6_ID_TRABAJADOR + " = :idSession")
+    List<Registro> getRegistroByUserId(String idSession);
 
     @Insert
     void insertRegistro(Registro obj);

@@ -161,6 +161,8 @@ public class MVVMRepository {
 
             registro1.setFecha(getDiaActual(fechaActualDiaHora()));
             registro1.setHoraEntrada(getHoraActual(fechaActualDiaHora()));
+            registro1.setHoraSalida("");
+            registro1.setHorasDia("");
             registro1.setId_trabajador(Integer.parseInt(idSession));
 
             dbb.getRegistroDao().insertRegistro(registro1);
@@ -369,8 +371,12 @@ public class MVVMRepository {
      * @return
      */
     public static ArrayList<Registro> getListRegistros(String idSession) {
+
         ArrayList<Registro> listRegistros = new ArrayList<>();
 
+        listRegistros = (ArrayList<Registro>) dbb.getRegistroDao().getRegistroByUserId(idSession);
+
+        /*
         Cursor cursor = db.query(
                 DBDesign.DBEntry.TABLE_REGISTRO,
                 null,
@@ -392,6 +398,7 @@ public class MVVMRepository {
             listRegistros.add(registro);
         }
         cursor.close();
+        */
         return listRegistros;
     }
 
