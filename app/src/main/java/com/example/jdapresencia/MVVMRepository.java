@@ -452,6 +452,42 @@ public class MVVMRepository {
             Toast.makeText(context, "Username is required", Toast.LENGTH_SHORT).show();
         } else {
             //Se mira si existe el usuario introducido
+            User userCheck = dbb.getUserDao().getUserByUsername(username);
+
+            if (userCheck != null) {
+                // Passing values
+                int uid = userCheck.getIdU();
+                String rol = userCheck.getRol();
+                String userName = userCheck.getUsername();
+                String password = userCheck.getPassword();
+
+                //Si los campos de nuevo nombre y nueva contraseña estan vacios, solo se actualiza el rol
+                if (TextUtils.isEmpty(newUsername) && TextUtils.isEmpty(newPwd)) {
+                    //TODO REVISAR LA QUERY
+                    dbb.getUserDao().updateUserRol(rol, userName);
+                    Toast.makeText(context, "Rol actualizado", Toast.LENGTH_SHORT).show();
+                //Si el campo de nuevo nombre esta vacio, solo se actualiza la contraseña y el rol
+                } else if (TextUtils.isEmpty(newUsername)) {
+                    dbb.getUserDao().updateUserPassword(rol, newPwd, userName);
+                    Toast.makeText(context, "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                //Si el campo de nuevo contraseña esta vacio, solo se actualiza el nombre y el rol
+                } else if (TextUtils.isEmpty(newPwd)) {
+                    //Se mira si ya existe el nuevo nombre
+                    User userExists = dbb.getUserDao().getUserByUsername(newUsername);
+
+                    if (userExists != null) {
+                        Toast.makeText(context, "User " + newUsername + " already exists", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, "Username actualizado", Toast.LENGTH_SHORT).show();
+                    }
+                //Si se rellenan todos los campos, se actualiza con todos los campos
+                } else {
+                    Toast.makeText(context, "Campos actualizados correctamente", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+            /*
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{username});
 
             if (cursor.moveToFirst()){
@@ -521,6 +557,7 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
+            */
         }
     }
 

@@ -25,4 +25,12 @@ public interface UserDao {
 
     @Query("DELETE FROM " + User.TABLE_NAME + " WHERE " + User.TU_C3_USERNAME + " = :username")
     void deleteByUsername(String username);
+
+    @Query("UPDATE " + User.TABLE_NAME + " SET " + User.TU_C2_ROL + " = :rol " +
+            " WHERE " + User.TU_C3_USERNAME + " = :username")
+    void updateUserRol(String rol, String username);
+
+    @Query("UPDATE " + User.TABLE_NAME + " SET " + User.TU_C2_ROL + " = :rol , " +
+            User.TU_C4_PASSWORD + " = :pwd WHERE " + User.TU_C3_USERNAME + " = :username")
+    void updateUserPassword(String rol, String pwd, String username);
 }
