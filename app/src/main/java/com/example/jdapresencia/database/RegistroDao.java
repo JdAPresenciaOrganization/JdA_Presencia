@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 
 import com.example.jdapresencia.model.Registro;
+import com.example.jdapresencia.model.User;
 
 import java.util.List;
 
@@ -12,11 +13,15 @@ import java.util.List;
 public interface RegistroDao {
 
     @Query("SELECT COUNT(*) FROM " + Registro.TABLE_NAME)
-    int getUsersCount();
+    int getRegistroCount();
 
     @Query("SELECT * FROM " + Registro.TABLE_NAME)
-    List<Registro> getAllUsersList();
+    List<Registro> getAllRegistroList();
+
+    @Query("SELECT * FROM " + Registro.TABLE_NAME + " WHERE " + Registro.TR_C2_FECHA + " = :fechaHoy AND " +
+            Registro.TR_C6_ID_TRABAJADOR + " = :idSession")
+    Registro gerRegistroHoy(String fechaHoy, String idSession);
 
     @Insert
-    void insertUser(Registro obj);
+    void insertRegistro(Registro obj);
 }

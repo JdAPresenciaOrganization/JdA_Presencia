@@ -151,6 +151,23 @@ public class MVVMRepository {
 
     public static void userCheckIn(String idSession) {
 
+        Registro registroCheck =
+                dbb.getRegistroDao().gerRegistroHoy(getDiaActual(fechaActualDiaHora()), idSession);
+
+        if (registroCheck != null) {
+            Toast.makeText(context, "¡Ya has hecho check in hoy!",Toast.LENGTH_SHORT).show();
+        } else {
+            Registro registro1 = new Registro();
+
+            registro1.setFecha(getDiaActual(fechaActualDiaHora()));
+            registro1.setHoraEntrada(getHoraActual(fechaActualDiaHora()));
+            registro1.setId_trabajador(Integer.parseInt(idSession));
+
+            dbb.getRegistroDao().insertRegistro(registro1);
+
+            Toast.makeText(context, "Check in done",Toast.LENGTH_SHORT).show();
+        }
+        /*
         Cursor cursor = db.rawQuery("Select * from registro where fecha=? and id_trabajador=?",
                 new String[]{getDiaActual(fechaActualDiaHora()), idSession});
 
@@ -183,6 +200,7 @@ public class MVVMRepository {
             }
         }
         cursor.close();
+        */
     }
 
     public static void userCheckOut(String idSession) {
