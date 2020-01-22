@@ -314,6 +314,16 @@ public class MVVMRepository {
         ArrayList<User> listUser = new ArrayList<>();
 
         if (!username.equals("")) {
+            User userCheck = dbb.getUserDao().getUserByUsername(username);
+
+            if (userCheck != null) {
+                listUser.add(userCheck);
+            }
+        } else {
+            listUser = (ArrayList<User>) dbb.getUserDao().getAllUsersList();
+        }
+        /*
+        if (!username.equals("")) {
             Cursor cursor = db.query(
                     DBDesign.DBEntry.TABLE_USER,
                     null,
@@ -357,6 +367,7 @@ public class MVVMRepository {
             }
             cursor.close();
         }
+        */
 
         return listUser;
     }
