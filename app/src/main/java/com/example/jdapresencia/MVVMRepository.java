@@ -26,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -98,6 +99,27 @@ public class MVVMRepository {
         if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
             Toast.makeText(context, "Enter username and password",Toast.LENGTH_SHORT).show();
         } else {
+            User userCheck = dbb.getUserDao().getUserByUsername(user);
+
+            if (userCheck != null) {
+                // Passing values
+                int uid = userCheck.getIdU();
+                String rol = userCheck.getRol();
+                String password = userCheck.getPassword();
+                String pwd_salt = userCheck.getSalt();
+
+                //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
+                boolean passwordMatch = PasswordUtils.verifyUserPassword(pass, password, pwd_salt);
+                if (passwordMatch) {
+                    LoginActivity.loginSuccess(uid, rol);
+                } else {
+                    Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+            }
+
+            /*
             Cursor cursor = db.rawQuery("Select * from user where username=?", new String[]{user});
 
             if (cursor.moveToFirst()){
@@ -121,6 +143,7 @@ public class MVVMRepository {
                 Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
             }
             cursor.close();
+            */
         }
     }
 

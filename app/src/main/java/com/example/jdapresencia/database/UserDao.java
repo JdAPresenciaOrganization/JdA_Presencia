@@ -17,6 +17,9 @@ public interface UserDao {
     @Query("SELECT * FROM " + User.TABLE_NAME)
     List<User> getAllUsersList();
 
+    @Query("SELECT * FROM " + User.TABLE_NAME + " WHERE " + User.TU_C3_USERNAME + " = :username")
+    User getUserByUsername(String username);
+
     @Insert
     void insertUser(User obj);
 }
