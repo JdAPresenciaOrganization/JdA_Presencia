@@ -1,14 +1,12 @@
 package com.example.jdapresencia;
 
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jdapresencia.database.AppDatabase;
-import com.example.jdapresencia.database.DBHelper;
 import com.example.jdapresencia.model.Mensaje;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
@@ -696,13 +694,15 @@ public class MVVMRepository {
         cursor.close();
         */
 
+        User userCheck = dbb.getUserDao().getUserById(Integer.parseInt(idSession));
+
         // Read the input field and push a new instance of ChatMessage to the Firebase database
         FirebaseDatabase.getInstance()
                 .getReference()
                 .child("JdAP")
                 .child("mensajes")
                 .push()
-                .setValue(new Mensaje("", "admin", msg.getText().toString(), Integer.parseInt(idSession))
+                .setValue(new Mensaje(userCheck.getUsername(), "admin", msg.getText().toString(), userCheck.getIdU())
                 );
 
         // Clear the input

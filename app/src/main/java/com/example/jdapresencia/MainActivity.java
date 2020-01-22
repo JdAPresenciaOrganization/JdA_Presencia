@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_home_admin,
                 R.id.nav_gestionar_trabajadores, R.id.nav_buscador_trabajadores,
-                R.id.nav_mis_registros, R.id.nav_send)
+                R.id.nav_mis_registros, R.id.nav_send, R.id.nav_receive)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -93,10 +93,12 @@ public class MainActivity extends AppCompatActivity {
         if (isAdmin){
             nav_Menu.findItem(R.id.nav_home).setVisible(false);
             nav_Menu.findItem(R.id.nav_mis_registros).setVisible(false);
+            nav_Menu.findItem(R.id.nav_send).setVisible(false);
         } else {
             nav_Menu.findItem(R.id.nav_home_admin).setVisible(false);
             nav_Menu.findItem(R.id.nav_gestionar_trabajadores).setVisible(false);
             nav_Menu.findItem(R.id.nav_buscador_trabajadores).setVisible(false);
+            nav_Menu.findItem(R.id.nav_receive).setVisible(false);
         }
     }
 

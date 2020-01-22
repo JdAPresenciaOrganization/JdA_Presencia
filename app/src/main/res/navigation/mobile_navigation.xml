@@ -45,4 +45,10 @@
         android:name="com.example.jdapresencia.ui.send.SendFragment"
         android:label="@string/menu_send"
         tools:layout="@layout/fragment_send" />
+
+    <fragment
+        android:id="@+id/nav_receive"
+        android:name="com.example.jdapresencia.ui.receive.ReceiveFragment"
+        android:label="@string/menu_receive"
+        tools:layout="@layout/fragment_receive" />
 </navigation>

@@ -32,9 +32,6 @@ public class SendFragment extends Fragment {
     EditText sendMsg;
     Button btnSendMsg;
 
-    private RecyclerView recyclerView;
-    private AdapterChat adapter;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         sendViewModel =
@@ -69,77 +66,6 @@ public class SendFragment extends Fragment {
             }
         });
 
-        recyclerView = root.findViewById(R.id.recyclerListMessages);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
-        Query query = FirebaseDatabase.getInstance()
-                .getReference()
-                .child("JdAP")
-                .child("mensajes");
-
-        FirebaseRecyclerOptions<Mensaje> options =
-                new FirebaseRecyclerOptions.Builder<Mensaje>()
-                        .setQuery(query, Mensaje.class)
-                        .build();
-
-        adapter = new AdapterChat(options);
-
-        recyclerView.setAdapter(adapter);
-
         return root;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        adapter.startListening();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        adapter.stopListening();
-    }
-
-    public class AdapterChat extends FirebaseRecyclerAdapter<Mensaje, AdapterChat.ChatViewHolder> {
-        /**
-         * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
-         * {@link FirebaseRecyclerOptions} for configuration options.
-         *
-         * @param options
-         */
-        public AdapterChat(@NonNull FirebaseRecyclerOptions<Mensaje> options) {
-            super(options);
-        }
-
-        @Override
-        protected void onBindViewHolder(@NonNull AdapterChat.ChatViewHolder holder, int position, @NonNull Mensaje model) {
-            // Bind the Chat object to the ChatHolder
-            holder.messageText.setText(model.getMensaje());
-            holder.messageSender.setText(model.getEmisor());
-            holder.messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)", model.getMessageTime()));
-        }
-
-        @NonNull
-        @Override
-        public AdapterChat.ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            // Create a new instance of the ViewHolder, in this case we are using a custom
-            // layout called R.layout.message for each item
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_mensajes, parent,false);
-            return new ChatViewHolder(view);
-        }
-
-        public class ChatViewHolder extends RecyclerView.ViewHolder {
-            TextView messageText, messageSender, messageTime;
-
-            public ChatViewHolder(@NonNull View itemView) {
-                super(itemView);
-
-                messageText = itemView.findViewById(R.id.message_text);
-                messageSender = itemView.findViewById(R.id.message_sender);
-                messageTime = itemView.findViewById(R.id.message_time);
-
-            }
-        }
     }
 }
