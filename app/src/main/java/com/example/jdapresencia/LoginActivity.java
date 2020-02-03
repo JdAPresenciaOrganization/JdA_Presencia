@@ -34,8 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         bLogin = findViewById(R.id.login_button);
 
         //PostgreSQL check server connection
-        MVVMRepository.DBConnectionTask dbConnectionTask = new MVVMRepository.DBConnectionTask();
-        dbConnectionTask.execute();
+        MVVMRepository.CheckLoginTask checkLoginTask = new MVVMRepository.CheckLoginTask();
+        checkLoginTask.execute();
 
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override

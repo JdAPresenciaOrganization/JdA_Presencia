@@ -748,15 +748,65 @@ public class MVVMRepository {
         return conn;
     }
 
-    public static class DBConnectionTask extends AsyncTask<Void, Void, Boolean> {
+    //Clase AsyncTask que comprueba el login inicial
+    public static class CheckLoginTask extends AsyncTask<Void, Void, Boolean> {
         @Override
         protected Boolean doInBackground(Void... voids) {
 
             try {
+                //Llamada a la conexión
                 conn = getConnection();
                 if (conn == null) {
                     return null;
                 } else {
+                    /* Se mira si existen usuarios en la tabla de usuarios,
+                    si no existe ningun usuario se inserta por defecto un
+                    administrador y un trabajador */
+                    String sql = "select count(*) from muser;";
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ResultSet rs = ps.executeQuery();
+                    int count = 0;
+
+                    while(rs.next()) {
+                        count = rs.getInt(1);
+                    }
+
+                    if (count == 0) {
+                        String sql2 = "insert into muser (rol,username,password,salt)"
+                                + "VALUES(?,?,?,?);";
+                        PreparedStatement ps2 = conn.prepareStatement(sql2);
+
+                        String salt = PasswordUtils.getSalt(30);
+
+                        ps2.setString(1, "admin");
+                        ps2.setString(2, "admin");
+                        ps2.setString(3, PasswordUtils.generateSecurePassword("1234", salt));
+                        ps2.setString(4, salt);
+
+                        if(ps2.executeUpdate() == 1) {
+                            Log.i("CONN", "insert admin ok");
+                        } else {
+                            Log.i("CONN", "insert admin KO");
+                        }
+
+                        String sql3 = "insert into muser (rol,username,password,salt)"
+                                + "VALUES(?,?,?,?);";
+                        PreparedStatement ps3 = conn.prepareStatement(sql3);
+
+                        String salt2 = PasswordUtils.getSalt(30);
+
+                        ps3.setString(1, "trabajador");
+                        ps3.setString(2, "worker");
+                        ps3.setString(3, PasswordUtils.generateSecurePassword("test", salt2));
+                        ps3.setString(4, salt2);
+
+                        if(ps3.executeUpdate() == 1) {
+                            Log.i("CONN", "insert worker ok");
+                        } else {
+                            Log.i("CONN", "insert worker KO");
+                        }
+                    }
+                    /*
                     String consulta = "select * from muser where username = ? ";
                     PreparedStatement ps = conn.prepareStatement(consulta);
                     ps.setString(1, "worker");
@@ -769,6 +819,7 @@ public class MVVMRepository {
                         Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(3));
                         Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(4));
                     }
+                    */
                 }
             } catch (Exception e) {
                 Log.e("ERROR Conexion:",e.getMessage());
