@@ -1,8 +1,9 @@
 package com.example.jdapresencia;
 
 import android.content.Context;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -12,6 +13,11 @@ import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +37,12 @@ public class MVVMRepository {
     private static AppDatabase dbb;
     //Singleton
     private static MVVMRepository srepository;
+
+    //PostgreSQL Server
+    protected static final String driver = "org.postgresql.Driver";
+    protected static final String url = "jdbc:postgresql://192.168.0.22:5432/grace";
+    protected static final String dbUser = "grace";
+    protected static final String dbPass = "hooper";
 
     private MVVMRepository(Context context){
         this.context = context;
@@ -710,4 +722,73 @@ public class MVVMRepository {
     }
 
     /**************** FIN FIREBASE METHODS ****************/
+
+    /***************** POSTGRESQL SERVER ******************/
+
+    //Variable con la conexión al servidor
+    public static Connection conn = null;
+
+    /**
+     * Devuelve la conexión al servidor
+     * @return Connection
+     */
+    public static Connection getConnection(){
+        try {
+            Class.forName(MVVMRepository.driver);
+            conn = DriverManager.getConnection(MVVMRepository.url, MVVMRepository.dbUser, MVVMRepository.dbPass);
+
+            if (conn == null) {
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return conn;
+    }
+
+    public static class DBConnectionTask extends AsyncTask<Void, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            try {
+                conn = getConnection();
+                if (conn == null) {
+                    return null;
+                } else {
+                    String consulta = "select * from muser where username = ? ";
+                    PreparedStatement ps = conn.prepareStatement(consulta);
+                    ps.setString(1, "worker");
+                    ResultSet rs = ps.executeQuery();
+
+                    while(rs.next())
+                    {
+                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(1));
+                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(2));
+                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(3));
+                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(4));
+                    }
+                }
+            } catch (Exception e) {
+                Log.e("ERROR Conexion:",e.getMessage());
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result) {
+                Log.i("CONN", "conectado");
+            }else {
+                Log.i("CONN", "no conectado");
+            }
+        }
+    }
+
+    /*************** FIN POSTGRESQL SERVER ****************/
 }

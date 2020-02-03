@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        //Se crea admin y trabajador por defecto
+        //Se crea admin y trabajador por defecto en SQLite
         initUserTable();
 
         mContext = this;
@@ -32,10 +33,14 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         bLogin = findViewById(R.id.login_button);
 
+        //PostgreSQL check server connection
+        MVVMRepository.DBConnectionTask dbConnectionTask = new MVVMRepository.DBConnectionTask();
+        dbConnectionTask.execute();
+
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MVVMRepository.checkLogin(user.getText().toString(), pass.getText().toString());
+                //MVVMRepository.checkLogin(user.getText().toString(), pass.getText().toString());
             }
         });
     }
