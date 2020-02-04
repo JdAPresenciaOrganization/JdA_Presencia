@@ -748,6 +748,16 @@ public class MVVMRepository {
         return conn;
     }
 
+    public static void closeServerDB(){
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     //Clase AsyncTask que comprueba el login inicial
     public static class CheckLoginTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -760,6 +770,9 @@ public class MVVMRepository {
         @Override
         protected Boolean doInBackground(Void... voids) {
 
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+
             try {
                 //Llamada a la conexión
                 conn = getConnection();
@@ -770,8 +783,8 @@ public class MVVMRepository {
                     si no existe ningun usuario se inserta por defecto un
                     administrador y un trabajador */
                     String sql = "select count(*) from muser;";
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ResultSet rs = ps.executeQuery();
+                    ps = conn.prepareStatement(sql);
+                    rs = ps.executeQuery();
                     int count = 0;
 
                     while(rs.next()) {
@@ -781,16 +794,16 @@ public class MVVMRepository {
                     if (count == 0) {
                         String sql2 = "insert into muser (rol,username,password,salt)"
                                 + "VALUES(?,?,?,?);";
-                        PreparedStatement ps2 = conn.prepareStatement(sql2);
+                        ps = conn.prepareStatement(sql2);
 
                         String salt = PasswordUtils.getSalt(30);
 
-                        ps2.setString(1, "admin");
-                        ps2.setString(2, "admin");
-                        ps2.setString(3, PasswordUtils.generateSecurePassword("1234", salt));
-                        ps2.setString(4, salt);
+                        ps.setString(1, "admin");
+                        ps.setString(2, "admin");
+                        ps.setString(3, PasswordUtils.generateSecurePassword("1234", salt));
+                        ps.setString(4, salt);
 
-                        if(ps2.executeUpdate() == 1) {
+                        if(ps.executeUpdate() == 1) {
                             Log.i("CONN", "insert admin ok");
                         } else {
                             Log.i("CONN", "insert admin KO");
@@ -798,16 +811,16 @@ public class MVVMRepository {
 
                         String sql3 = "insert into muser (rol,username,password,salt)"
                                 + "VALUES(?,?,?,?);";
-                        PreparedStatement ps3 = conn.prepareStatement(sql3);
+                        ps = conn.prepareStatement(sql3);
 
                         String salt2 = PasswordUtils.getSalt(30);
 
-                        ps3.setString(1, "trabajador");
-                        ps3.setString(2, "worker");
-                        ps3.setString(3, PasswordUtils.generateSecurePassword("test", salt2));
-                        ps3.setString(4, salt2);
+                        ps.setString(1, "trabajador");
+                        ps.setString(2, "worker");
+                        ps.setString(3, PasswordUtils.generateSecurePassword("test", salt2));
+                        ps.setString(4, salt2);
 
-                        if(ps3.executeUpdate() == 1) {
+                        if(ps.executeUpdate() == 1) {
                             Log.i("CONN", "insert worker ok");
                         } else {
                             Log.i("CONN", "insert worker KO");
@@ -819,18 +832,18 @@ public class MVVMRepository {
                         Log.i("CONN", "Enter username and password");
                     } else {
                         String consulta = "select * from muser where username = ? ";
-                        PreparedStatement pstm = conn.prepareStatement(consulta);
-                        pstm.setString(1, username);
-                        ResultSet rset = pstm.executeQuery();
+                        ps = conn.prepareStatement(consulta);
+                        ps.setString(1, username);
+                        rs = ps.executeQuery();
 
-                        if (rset.next()) {
+                        if (rs.next()) {
                             do {
                                 // Passing values
-                                String uid = rset.getString(1);
-                                String rol = rset.getString(2);
-                                String username = rset.getString(3);
-                                String password = rset.getString(4);
-                                String pwd_salt = rset.getString(5);
+                                String uid = rs.getString(1);
+                                String rol = rs.getString(2);
+                                String username = rs.getString(3);
+                                String password = rs.getString(4);
+                                String pwd_salt = rs.getString(5);
 
                                 //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
                                 boolean passwordMatch = PasswordUtils.verifyUserPassword(pass, password, pwd_salt);
@@ -839,7 +852,7 @@ public class MVVMRepository {
                                 } else {
                                     Log.i("CONN", "Incorrect password");
                                 }
-                            } while (rset.next());
+                            } while (rs.next());
                         } else {
                             Log.i("CONN", "User not found");
                         }
@@ -848,6 +861,22 @@ public class MVVMRepository {
             } catch (Exception e) {
                 Log.e("ERROR Conexion:",e.getMessage());
                 return false;
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
 
             return true;
