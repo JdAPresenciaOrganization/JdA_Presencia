@@ -750,6 +750,13 @@ public class MVVMRepository {
 
     //Clase AsyncTask que comprueba el login inicial
     public static class CheckLoginTask extends AsyncTask<Void, Void, Boolean> {
+
+        String username, pass;
+
+        public CheckLoginTask(String username, String pass){
+            this.username = username;
+            this.pass = pass;
+        }
         @Override
         protected Boolean doInBackground(Void... voids) {
 
@@ -757,7 +764,7 @@ public class MVVMRepository {
                 //Llamada a la conexión
                 conn = getConnection();
                 if (conn == null) {
-                    return null;
+                    return false;
                 } else {
                     /* Se mira si existen usuarios en la tabla de usuarios,
                     si no existe ningun usuario se inserta por defecto un
@@ -806,20 +813,37 @@ public class MVVMRepository {
                             Log.i("CONN", "insert worker KO");
                         }
                     }
-                    /*
-                    String consulta = "select * from muser where username = ? ";
-                    PreparedStatement ps = conn.prepareStatement(consulta);
-                    ps.setString(1, "worker");
-                    ResultSet rs = ps.executeQuery();
 
-                    while(rs.next())
-                    {
-                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(1));
-                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(2));
-                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(3));
-                        Log.i("@@@@@@@@@@@@@@@@@@@", rs.getString(4));
+                    //Comprobación si usuario y contraseña de login son correctos
+                    if (TextUtils.isEmpty(username) || TextUtils.isEmpty(pass)) {
+                        Log.i("CONN", "Enter username and password");
+                    } else {
+                        String consulta = "select * from muser where username = ? ";
+                        PreparedStatement pstm = conn.prepareStatement(consulta);
+                        pstm.setString(1, username);
+                        ResultSet rset = pstm.executeQuery();
+
+                        if (rset.next()) {
+                            do {
+                                // Passing values
+                                String uid = rset.getString(1);
+                                String rol = rset.getString(2);
+                                String username = rset.getString(3);
+                                String password = rset.getString(4);
+                                String pwd_salt = rset.getString(5);
+
+                                //Si la contraseña que se ingresa es igual a la contraseña desencriptada del usuario es que los datos son correctos
+                                boolean passwordMatch = PasswordUtils.verifyUserPassword(pass, password, pwd_salt);
+                                if (passwordMatch) {
+                                    LoginActivity.loginSuccess(uid, rol);
+                                } else {
+                                    Log.i("CONN", "Incorrect password");
+                                }
+                            } while (rset.next());
+                        } else {
+                            Log.i("CONN", "User not found");
+                        }
                     }
-                    */
                 }
             } catch (Exception e) {
                 Log.e("ERROR Conexion:",e.getMessage());
@@ -836,6 +860,10 @@ public class MVVMRepository {
             if(result) {
                 Log.i("CONN", "conectado");
             }else {
+                /***********************************************/
+                /* Si ha fallado la conexión se llama a SQLite */
+                /***********************************************/
+                checkLogin(username, pass);
                 Log.i("CONN", "no conectado");
             }
         }

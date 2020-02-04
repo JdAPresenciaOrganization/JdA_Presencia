@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,14 +32,15 @@ public class LoginActivity extends AppCompatActivity {
         pass = findViewById(R.id.password);
         bLogin = findViewById(R.id.login_button);
 
-        //PostgreSQL check server connection
-        MVVMRepository.CheckLoginTask checkLoginTask = new MVVMRepository.CheckLoginTask();
-        checkLoginTask.execute();
-
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //MVVMRepository.checkLogin(user.getText().toString(), pass.getText().toString());
+
+                //PostgreSQL check server connection
+                MVVMRepository.CheckLoginTask checkLoginTask =
+                        new MVVMRepository.CheckLoginTask(user.getText().toString(), pass.getText().toString());
+                checkLoginTask.execute();
             }
         });
     }
