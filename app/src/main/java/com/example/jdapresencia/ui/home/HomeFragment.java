@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.jdapresencia.MVVMRepository;
 import com.example.jdapresencia.R;
 
 public class HomeFragment extends Fragment {
@@ -39,14 +40,24 @@ public class HomeFragment extends Fragment {
         bCheckIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.userCheckIn(idSession);
+                //homeViewModel.userCheckIn(idSession);
+
+                //PostgreSQL user check in
+                MVVMRepository.UserCheckInTask userCheckInTask =
+                        new MVVMRepository.UserCheckInTask(idSession);
+                userCheckInTask.execute();
             }
         });
 
         bCheckOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                homeViewModel.userCheckOut(idSession);
+                //homeViewModel.userCheckOut(idSession);
+
+                //PostgreSQL user check out
+                MVVMRepository.UserCheckOutTask userCheckOutTask =
+                        new MVVMRepository.UserCheckOutTask(idSession);
+                userCheckOutTask.execute();
             }
         });
 

@@ -898,5 +898,129 @@ public class MVVMRepository {
         }
     }
 
+    /**
+     * CHECK IN
+     */
+    public static class UserCheckInTask extends AsyncTask<Void, Void, Boolean> {
+
+        String idsession;
+
+        public UserCheckInTask(String idSession){
+            this.idsession = idSession;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+
+            try {
+                //Llamada a la conexión
+                conn = getConnection();
+                if (conn == null) {
+                    return false;
+                } else {
+
+                }
+
+            } catch (Exception e) {
+                Log.e("ERROR Conexion:",e.getMessage());
+                return false;
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result) {
+                Log.i("CONN", "conectado check in");
+            }else {
+                Log.i("CONN", "no conectado check in");
+            }
+        }
+    }
+
+    /**
+     * CHECK OUT
+     */
+    public static class UserCheckOutTask extends AsyncTask<Void, Void, Boolean> {
+
+        String idsession;
+
+        public UserCheckOutTask(String idSession){
+            this.idsession = idSession;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+
+            try {
+                //Llamada a la conexión
+                conn = getConnection();
+                if (conn == null) {
+                    return false;
+                } else {
+
+                }
+
+            } catch (Exception e) {
+                Log.e("ERROR Conexion:",e.getMessage());
+                return false;
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result) {
+                Log.i("CONN", "conectado check out");
+            }else {
+                Log.i("CONN", "no conectado check out");
+            }
+        }
+    }
+
     /*************** FIN POSTGRESQL SERVER ****************/
 }
