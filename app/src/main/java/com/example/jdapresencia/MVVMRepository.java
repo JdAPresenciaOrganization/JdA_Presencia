@@ -921,7 +921,37 @@ public class MVVMRepository {
                 if (conn == null) {
                     return false;
                 } else {
+                    //Se comprueba si ya existe un check in en el dia actual con el id de session
+                    String sql = "select * from mregistro where fecha = ? and uid = ?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, getDiaActual(fechaActualDiaHora()));
+                    ps.setInt(2, Integer.parseInt(idsession));
+                    rs = ps.executeQuery();
 
+                    if (rs.next()) {
+                        do {
+
+                        } while (rs.next());
+                        Log.i("CONN", "Register DONE TODAY");
+                    } else {
+                        Log.i("CONN", "Register NOT FOUND TODAY");
+
+                        String sql2 = "insert into mregistro (fecha,hEntrada,hSalida,hDia,uid)"
+                                + "VALUES(?,?,?,?,?);";
+                        ps = conn.prepareStatement(sql2);
+
+                        ps.setString(1, getDiaActual(fechaActualDiaHora()));
+                        ps.setString(2, getHoraActual(fechaActualDiaHora()));
+                        ps.setString(3, "");
+                        ps.setString(4, "");
+                        ps.setInt(5, Integer.parseInt(idsession));
+
+                        if(ps.executeUpdate() == 1) {
+                            Log.i("CONN", "Check in done");
+                        } else {
+                            Log.i("CONN", "Something wrong");
+                        }
+                    }
                 }
 
             } catch (Exception e) {
