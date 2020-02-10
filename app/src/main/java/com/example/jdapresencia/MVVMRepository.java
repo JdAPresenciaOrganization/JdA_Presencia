@@ -2,6 +2,7 @@ package com.example.jdapresencia;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
@@ -773,6 +774,9 @@ public class MVVMRepository {
             PreparedStatement ps = null;
             ResultSet rs = null;
 
+            //Toast result
+            Handler handler = new Handler(context.getMainLooper());
+
             try {
                 //Llamada a la conexión
                 conn = getConnection();
@@ -829,7 +833,11 @@ public class MVVMRepository {
 
                     //Comprobación si usuario y contraseña de login son correctos
                     if (TextUtils.isEmpty(username) || TextUtils.isEmpty(pass)) {
-                        Log.i("CONN", "Enter username and password");
+                        handler.post( new Runnable(){
+                            public void run(){
+                                Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
                         String consulta = "select * from muser where username = ? ";
                         ps = conn.prepareStatement(consulta);
@@ -850,11 +858,19 @@ public class MVVMRepository {
                                 if (passwordMatch) {
                                     LoginActivity.loginSuccess(uid, rol);
                                 } else {
-                                    Log.i("CONN", "Incorrect password");
+                                    handler.post( new Runnable(){
+                                        public void run(){
+                                            Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
                                 }
                             } while (rs.next());
                         } else {
-                            Log.i("CONN", "User not found");
+                            handler.post( new Runnable(){
+                                public void run(){
+                                    Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
                 }
@@ -888,7 +904,7 @@ public class MVVMRepository {
 
             if(result) {
                 Log.i("CONN", "conectado");
-            }else {
+            } else {
                 /***********************************************/
                 /* Si ha fallado la conexión se llama a SQLite */
                 /***********************************************/
@@ -915,6 +931,9 @@ public class MVVMRepository {
             PreparedStatement ps = null;
             ResultSet rs = null;
 
+            //Toast result
+            Handler handler = new Handler(context.getMainLooper());
+
             try {
                 //Llamada a la conexión
                 conn = getConnection();
@@ -932,9 +951,17 @@ public class MVVMRepository {
                         do {
 
                         } while (rs.next());
-                        Log.i("CONN", "Register DONE TODAY");
+                        handler.post( new Runnable(){
+                            public void run(){
+                                Toast.makeText(context, "Register already done", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
-                        Log.i("CONN", "Register NOT FOUND TODAY");
+                        handler.post( new Runnable(){
+                            public void run(){
+                                Toast.makeText(context, "Today check in not found", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
                         String sql2 = "insert into mregistro (fecha,hEntrada,hSalida,hDia,uid)"
                                 + "VALUES(?,?,?,?,?);";
@@ -947,7 +974,11 @@ public class MVVMRepository {
                         ps.setInt(5, Integer.parseInt(idsession));
 
                         if(ps.executeUpdate() == 1) {
-                            Log.i("CONN", "Check in done");
+                            handler.post( new Runnable(){
+                                public void run(){
+                                    Toast.makeText(context, "Check in done", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } else {
                             Log.i("CONN", "Something wrong");
                         }
