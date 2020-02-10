@@ -1038,13 +1038,60 @@ public class MVVMRepository {
             PreparedStatement ps = null;
             ResultSet rs = null;
 
+            //Toast result
+            Handler handler = new Handler(context.getMainLooper());
+
             try {
                 //Llamada a la conexión
                 conn = getConnection();
                 if (conn == null) {
                     return false;
                 } else {
+                    //Se comprueba si existe un check in en el dia actual con el id de session
+                    String sql = "select * from mregistro where fecha = ? and uid = ?";
+                    ps = conn.prepareStatement(sql);
+                    ps.setString(1, getDiaActual(fechaActualDiaHora()));
+                    ps.setInt(2, Integer.parseInt(idsession));
+                    rs = ps.executeQuery();
 
+                    if (rs.next()) {
+                        do {
+                            // Passing values
+                            String idR = rs.getString(1);
+                            String fecha = rs.getString(2);
+                            String hEntrada = rs.getString(3);
+                            String hSalida = rs.getString(4);
+                            String hTotales = rs.getString(5);
+                            String idU = rs.getString(6);
+
+                            if (hSalida.equals("")) {
+                                String sql2 = "update mregistro set hSalida = ? where id = ?";
+                                ps = conn.prepareStatement(sql2);
+                                ps.setString(1, getHoraActual(fechaActualDiaHora()));
+                                ps.setInt(2, Integer.parseInt(idR));
+                                ps.executeUpdate();
+
+                                handler.post( new Runnable(){
+                                    public void run(){
+                                        Toast.makeText(context, "Check in done", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } else {
+                                handler.post( new Runnable(){
+                                    public void run(){
+                                        Toast.makeText(context, "Registro del día ya finalizado", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        } while (rs.next());
+
+                    } else {
+                        handler.post( new Runnable(){
+                            public void run(){
+                                Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
 
             } catch (Exception e) {
