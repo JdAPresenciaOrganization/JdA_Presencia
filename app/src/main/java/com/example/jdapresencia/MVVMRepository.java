@@ -957,12 +957,6 @@ public class MVVMRepository {
                             }
                         });
                     } else {
-                        handler.post( new Runnable(){
-                            public void run(){
-                                Toast.makeText(context, "Today check in not found", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
                         String sql2 = "insert into mregistro (fecha,hEntrada,hSalida,hDia,uid)"
                                 + "VALUES(?,?,?,?,?);";
                         ps = conn.prepareStatement(sql2);
@@ -1073,7 +1067,7 @@ public class MVVMRepository {
 
                                 handler.post( new Runnable(){
                                     public void run(){
-                                        Toast.makeText(context, "Check in done", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(context, "Check out done", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             } else {
