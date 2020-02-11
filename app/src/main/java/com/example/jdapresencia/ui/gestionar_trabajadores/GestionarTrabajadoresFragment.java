@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.jdapresencia.MVVMRepository;
 import com.example.jdapresencia.R;
 
 public class GestionarTrabajadoresFragment extends Fragment {
@@ -35,7 +36,12 @@ public class GestionarTrabajadoresFragment extends Fragment {
         bNewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gestionarTrabajadoresViewModel.addNewWorker(newUser.getText().toString(), pass.getText().toString());
+                //gestionarTrabajadoresViewModel.addNewWorker(newUser.getText().toString(), pass.getText().toString());
+
+                //PostgreSQL
+                MVVMRepository.AddNewWorkerTask addNewWorkerTask =
+                        new MVVMRepository.AddNewWorkerTask(newUser.getText().toString(), pass.getText().toString());
+                addNewWorkerTask.execute();
             }
         });
 

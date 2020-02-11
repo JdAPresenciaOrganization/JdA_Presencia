@@ -1124,5 +1124,120 @@ public class MVVMRepository {
         }
     }
 
+    /**
+     * Admin add new worker
+     */
+    public static class AddNewWorkerTask extends AsyncTask<Void, Void, Boolean> {
+
+        String user, pass;
+
+        public AddNewWorkerTask(String user, String pass){
+            this.user = user;
+            this.pass = pass;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            PreparedStatement ps = null;
+            ResultSet rs = null;
+
+            //Toast result
+            Handler handler = new Handler(context.getMainLooper());
+
+            try {
+                //Llamada a la conexión
+                conn = getConnection();
+                if (conn == null) {
+                    return false;
+                } else {
+                    if (TextUtils.isEmpty(user) || TextUtils.isEmpty(pass)) {
+                        handler.post( new Runnable(){
+                            public void run(){
+                                Toast.makeText(context, "Enter username and password", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } else {
+                        String sql = "select * from muser where username = ?";
+                        ps = conn.prepareStatement(sql);
+                        ps.setString(1, user);
+                        rs = ps.executeQuery();
+
+                        if (rs.next()) {
+                            do {
+                                // Passing values
+                                final String uname = rs.getString(3);
+
+                                handler.post(new Runnable() {
+                                    public void run() {
+                                        Toast.makeText(context, "User " + uname + " already exists", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            } while (rs.next());
+
+                        } else {
+
+                            String sql2 = "insert into muser (rol,username,password,salt)"
+                                    + "VALUES(?,?,?,?);";
+                            ps = conn.prepareStatement(sql2);
+
+                            String salt = PasswordUtils.getSalt(30);
+
+                            ps.setString(1, "trabajador");
+                            ps.setString(2, user);
+                            ps.setString(3, PasswordUtils.generateSecurePassword(pass, salt));
+                            ps.setString(4, salt);
+
+                            if(ps.executeUpdate() == 1) {
+                                Log.i("CONN", "insert admin ok");
+                            } else {
+                                Log.i("CONN", "insert admin KO");
+                            }
+
+                            handler.post(new Runnable() {
+                                public void run() {
+                                    Toast.makeText(context, "User register done", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                }
+
+            } catch (Exception e) {
+                Log.e("ERROR Conexion:",e.getMessage());
+                return false;
+            } finally {
+                if (ps != null) {
+                    try {
+                        ps.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (rs != null) {
+                    try {
+                        rs.close();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+
+            if(result) {
+                Log.i("CONN", "conectado check out");
+            }else {
+                Log.i("CONN", "no conectado check out");
+            }
+        }
+    }
+
     /*************** FIN POSTGRESQL SERVER ****************/
 }
