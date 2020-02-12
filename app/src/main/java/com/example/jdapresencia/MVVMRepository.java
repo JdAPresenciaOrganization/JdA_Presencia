@@ -1000,11 +1000,6 @@ public class MVVMRepository {
                         do {
 
                         } while (rs.next());
-                        handler.post( new Runnable(){
-                            public void run(){
-                                Toast.makeText(context, "Register already done", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                     } else {
                         String sql2 = "insert into mregistro (fecha,hEntrada,hSalida,hDia,uid)"
                                 + "VALUES(?,?,?,?,?);";
@@ -1017,11 +1012,7 @@ public class MVVMRepository {
                         ps.setInt(5, Integer.parseInt(idsession));
 
                         if(ps.executeUpdate() == 1) {
-                            handler.post( new Runnable(){
-                                public void run(){
-                                    Toast.makeText(context, "Check in done", Toast.LENGTH_SHORT).show();
-                                }
-                            });
+
                         } else {
                             Log.i("CONN", "Something wrong");
                         }
@@ -1057,8 +1048,10 @@ public class MVVMRepository {
             super.onPostExecute(result);
 
             if(result) {
+                userCheckIn(idsession);
                 Log.i("CONN", "conectado check in");
             }else {
+                userCheckIn(idsession);
                 Log.i("CONN", "no conectado check in");
             }
         }
@@ -1114,26 +1107,13 @@ public class MVVMRepository {
                                 ps.setInt(2, Integer.parseInt(idR));
                                 ps.executeUpdate();
 
-                                handler.post( new Runnable(){
-                                    public void run(){
-                                        Toast.makeText(context, "Check out done", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
                             } else {
-                                handler.post( new Runnable(){
-                                    public void run(){
-                                        Toast.makeText(context, "Registro del día ya finalizado", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                Log.i("CONN", "Registro del día ya finalizado");
                             }
                         } while (rs.next());
 
                     } else {
-                        handler.post( new Runnable(){
-                            public void run(){
-                                Toast.makeText(context, "¡Aún no has hecho check in hoy!",Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        Log.i("CONN", "¡Aún no has hecho check in hoy!");
                     }
                 }
 
@@ -1166,8 +1146,10 @@ public class MVVMRepository {
             super.onPostExecute(result);
 
             if(result) {
+                userCheckOut(idsession);
                 Log.i("CONN", "conectado check out");
             }else {
+                userCheckOut(idsession);
                 Log.i("CONN", "no conectado check out");
             }
         }
