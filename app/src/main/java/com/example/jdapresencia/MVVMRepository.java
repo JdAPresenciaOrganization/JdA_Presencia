@@ -831,6 +831,55 @@ public class MVVMRepository {
                         }
                     }
 
+                    /**
+                     * ¡¡¡IMPORTANTE!!!
+                     * Se tienen 2 variables, 1 que es el contador de la tabla user
+                     * de PostgreSQL y otra de SQLite.
+                     *
+                     * Los datos se guardan en las dos BBDD, es decir que si el contador
+                     * entre las dos no coincide, quiere decir que no se ha podido conectar
+                     * al servidor, por lo tanto habrá que sincronizar las dos BBDD.
+                     *
+                     * Se guarda en una lista todos los datos de los usuarios de SQLite Room
+                     * y se hace un bucle for inicializando la i con el contador de PostgreSQL
+                     * para posteriormente guardar en el servidor los datos restantes y así
+                     * poder realizar la sincronización.
+                     *
+                     * Ejemplo: si en SQLite hay 5 usuarios y en PostgreSQL hay 3 usuarios,
+                     * el bucle for recorre la lista de ROOM a partir del último usuario de
+                     * PostgreSQL, por lo tanto se guardará en el servidor el 4 y el 5.
+                     */
+
+                    //Comprobar la cantidad de usuarios de SQLite
+                    int SQLiteCont = dbb.getUserDao().getUsersCount();
+
+                    //Si no coinciden se sincroniza PostgreSQL con los id restantes que le falten
+                    if (SQLiteCont != count) {
+
+                        ArrayList<User> listUser = new ArrayList<>();
+
+                        listUser = (ArrayList<User>) dbb.getUserDao().getAllUsersList();
+
+                        for (int i = count; i < listUser.size(); i++) {
+
+                            String sql00 = "insert into muser (id,rol,username,password,salt)"
+                                    + "VALUES(?,?,?,?,?);";
+                            ps = conn.prepareStatement(sql00);
+
+                            ps.setInt(1, listUser.get(i).getIdU());
+                            ps.setString(2, listUser.get(i).getRol());
+                            ps.setString(3, listUser.get(i).getUsername());
+                            ps.setString(4, listUser.get(i).getPassword());
+                            ps.setString(5, listUser.get(i).getSalt());
+
+                            if(ps.executeUpdate() == 1) {
+                                Log.i("CONN", "insert ok");
+                            } else {
+                                Log.i("CONN", "insert KO");
+                            }
+                        }
+                    }
+
                     //Comprobación si usuario y contraseña de login son correctos
                     if (TextUtils.isEmpty(username) || TextUtils.isEmpty(pass)) {
                         handler.post( new Runnable(){
@@ -1189,9 +1238,9 @@ public class MVVMRepository {
                             ps.setString(4, salt);
 
                             if(ps.executeUpdate() == 1) {
-                                Log.i("CONN", "insert admin ok");
+                                Log.i("CONN", "insert ok");
                             } else {
-                                Log.i("CONN", "insert admin KO");
+                                Log.i("CONN", "insert KO");
                             }
 
                             handler.post(new Runnable() {
@@ -1231,10 +1280,14 @@ public class MVVMRepository {
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
 
+            /* Tanto si hay conexión como no, se guardará en SQLite
+                el usuario para una futura sincronización */
             if(result) {
-                Log.i("CONN", "conectado check out");
+                addNewWorker(user, pass);
+                Log.i("CONN", "conectado");
             }else {
-                Log.i("CONN", "no conectado check out");
+                addNewWorker(user, pass);
+                Log.i("CONN", "no conectado");
             }
         }
     }
