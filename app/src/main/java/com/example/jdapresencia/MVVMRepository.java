@@ -880,6 +880,49 @@ public class MVVMRepository {
                         }
                     }
 
+                    /**
+                     * Sincronización registros
+                     */
+                    String sql0 = "select count(*) from mregistro;";
+                    ps = conn.prepareStatement(sql0);
+                    rs = ps.executeQuery();
+                    int registerPostgreSQLCount = 0;
+
+                    while(rs.next()) {
+                        registerPostgreSQLCount = rs.getInt(1);
+                    }
+
+                    //Comprobar la cantidad de registros de SQLite
+                    int registerSQLiteCount = dbb.getRegistroDao().getRegistroCount();
+
+                    //Si no coinciden se sincroniza PostgreSQL con los id restantes que le falten
+                    if (registerSQLiteCount != registerPostgreSQLCount) {
+
+                        ArrayList<Registro> listRegistro = new ArrayList<>();
+
+                        listRegistro = (ArrayList<Registro>) dbb.getRegistroDao().getAllRegistroList();
+
+                        for (int i = registerPostgreSQLCount; i < listRegistro.size(); i++) {
+
+                            String sql000 = "insert into mregistro (id,fecha,hEntrada,hSalida,hDia,uid)"
+                                    + "VALUES(?,?,?,?,?,?);";
+                            ps = conn.prepareStatement(sql000);
+
+                            ps.setInt(1, listRegistro.get(i).getIdR());
+                            ps.setString(2, listRegistro.get(i).getFecha());
+                            ps.setString(3, listRegistro.get(i).getHoraEntrada());
+                            ps.setString(4, listRegistro.get(i).getHoraSalida());
+                            ps.setString(5, listRegistro.get(i).getHorasDia());
+                            ps.setInt(6, listRegistro.get(i).getId_trabajador());
+
+                            if(ps.executeUpdate() == 1) {
+                                Log.i("CONN", "register ok");
+                            } else {
+                                Log.i("CONN", "register KO");
+                            }
+                        }
+                    }
+
                     //Comprobación si usuario y contraseña de login son correctos
                     if (TextUtils.isEmpty(username) || TextUtils.isEmpty(pass)) {
                         handler.post( new Runnable(){
