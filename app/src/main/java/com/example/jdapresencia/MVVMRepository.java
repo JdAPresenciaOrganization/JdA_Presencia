@@ -923,6 +923,43 @@ public class MVVMRepository {
                         }
                     }
 
+                    /**
+                     * Sincronización registros de hora salida
+                     */
+                    String sqlz = "select count(*) from mregistro where hsalida = ?;";
+                    ps = conn.prepareStatement(sqlz);
+                    ps.setString(1, "");
+                    rs = ps.executeQuery();
+                    int registerSalidaPostgreSQLCount = 0;
+
+                    while(rs.next()) {
+                        registerSalidaPostgreSQLCount = rs.getInt(1);
+                    }
+
+                    //Comprobar la cantidad de registros de SQLite
+                    int registerSalidaSQLiteCount = dbb.getRegistroDao().getRegistroSalidaCount();
+
+                    if (registerSalidaSQLiteCount != registerSalidaPostgreSQLCount) {
+
+                        ArrayList<Registro> listRegistro = new ArrayList<>();
+
+                        listRegistro = (ArrayList<Registro>) dbb.getRegistroDao().getAllRegistroList();
+
+                        for (int i = 0; i < listRegistro.size(); i++) {
+                            String sqlzz = "update mregistro set hSalida = ? where id = ?";
+                            ps = conn.prepareStatement(sqlzz);
+                            ps.setString(1, listRegistro.get(i).getHoraSalida());
+                            ps.setInt(2, listRegistro.get(i).getIdR());
+                            ps.executeUpdate();
+
+                            if(ps.executeUpdate() == 1) {
+                                Log.i("CONN", "update ok");
+                            } else {
+                                Log.i("CONN", "update KO");
+                            }
+                        }
+                    }
+
                     //Comprobación si usuario y contraseña de login son correctos
                     if (TextUtils.isEmpty(username) || TextUtils.isEmpty(pass)) {
                         handler.post( new Runnable(){

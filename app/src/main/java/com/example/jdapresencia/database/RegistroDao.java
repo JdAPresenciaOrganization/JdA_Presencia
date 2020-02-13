@@ -15,6 +15,9 @@ public interface RegistroDao {
     @Query("SELECT COUNT(*) FROM " + Registro.TABLE_NAME)
     int getRegistroCount();
 
+    @Query("SELECT COUNT(*) FROM " + Registro.TABLE_NAME + " WHERE " + Registro.TR_C4_HORA_SALIDA + " = '' ")
+    int getRegistroSalidaCount();
+
     @Query("SELECT * FROM " + Registro.TABLE_NAME)
     List<Registro> getAllRegistroList();
 
