@@ -14,13 +14,11 @@
     <string name="menu_gestionar_trabajadores">Gestionar trabajadores</string>
     <string name="menu_buscador_trabajadores">Buscador trabajadores</string>
     <string name="menu_mis_registros">Mis registros</string>
+    <string name="menu_profile">Profile</string>
 
     <string name="menu_send">Send</string>
     <string name="menu_receive">Messages</string>
 
     <string name="boton_buscador">Buscar</string>
     <string name="boton_ver_registros">Ver registros</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
