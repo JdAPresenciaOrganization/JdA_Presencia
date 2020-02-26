@@ -2,13 +2,18 @@ package com.example.jdapresencia;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.navigation.NavController;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavInflater;
@@ -17,6 +22,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -24,11 +32,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     boolean isAdmin = false;
+    TextView usrName;
+    ImageView usrImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +112,33 @@ public class MainActivity extends AppCompatActivity {
             nav_Menu.findItem(R.id.nav_buscador_trabajadores).setVisible(false);
             nav_Menu.findItem(R.id.nav_receive).setVisible(false);
         }
+
+        /**
+         * NAVIGATION HEADER DATA
+         */
+        View header = navigationView.getHeaderView(0);
+        usrName = (TextView) header.findViewById(R.id.textView);
+        usrImg = (ImageView) header.findViewById(R.id.imageView);
+
+        usrName.setText(idSession);
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        storageRef.child("test.jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                // Got the download URL for 'users/me/profile.png'
+                // Pass it to Picasso to download, show in ImageView and caching
+                Picasso.get().load(uri).into(usrImg);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+                Log.i("INFO", "No user image");
+            }
+        });
     }
 
     @Override
