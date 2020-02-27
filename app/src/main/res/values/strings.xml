@@ -18,6 +18,8 @@
 
     <string name="menu_send">Send</string>
     <string name="menu_receive">Messages</string>
+    <string name="menu_music">Music</string>
+    <string name="menu_video">Video</string>
 
     <string name="boton_buscador">Buscar</string>
     <string name="boton_ver_registros">Ver registros</string>

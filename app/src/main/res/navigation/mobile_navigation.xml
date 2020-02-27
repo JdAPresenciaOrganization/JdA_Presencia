@@ -57,4 +57,16 @@
         android:name="com.example.jdapresencia.ui.receive.ReceiveFragment"
         android:label="@string/menu_receive"
         tools:layout="@layout/fragment_receive" />
+
+    <fragment
+        android:id="@+id/nav_music"
+        android:name="com.example.jdapresencia.ui.multimedia.MusicFragment"
+        android:label="@string/menu_music"
+        tools:layout="@layout/music_fragment" />
+
+    <fragment
+        android:id="@+id/nav_video"
+        android:name="com.example.jdapresencia.ui.multimedia.VideoFragment"
+        android:label="@string/menu_video"
+        tools:layout="@layout/music_fragment" />
 </navigation>
