@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     boolean isAdmin = false;
-    TextView usrName;
+    TextView usrName, coName;
     ImageView usrImg;
 
     @Override
@@ -117,10 +117,12 @@ public class MainActivity extends AppCompatActivity {
          * NAVIGATION HEADER DATA
          */
         View header = navigationView.getHeaderView(0);
+        coName = (TextView) header.findViewById(R.id.textViewApp);
         usrName = (TextView) header.findViewById(R.id.textView);
         usrImg = (ImageView) header.findViewById(R.id.imageView);
 
-        usrName.setText(idSession);
+        coName.setText("JdA Presència");
+        usrName.setText(MVVMRepository.getUserById(idSession));
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();

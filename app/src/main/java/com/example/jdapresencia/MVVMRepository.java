@@ -401,6 +401,14 @@ public class MVVMRepository {
 
         return listUser;
     }
+
+    public static String getUserById(String idSession) {
+
+        User userCheck = dbb.getUserDao().getUserById(Integer.parseInt(idSession));
+
+        return userCheck.getUsername();
+    }
+
     /******** FIN BUSCADOR USER METHODS ********/
 
     /******** MY REGISTERS METHODS ********/
