@@ -32,26 +32,19 @@ public class RegistrosFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         registrosViewModel =
                 ViewModelProviders.of(this).get(RegistrosViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_registros, container, false);
+        View root = inflater.inflate(R.layout.fragment_registros_trabajador, container, false);
 
         //Captura el id del usuario logueado enviado del MainActivity
         SharedPreferences pref = getActivity().getPreferences(getActivity().MODE_PRIVATE);
         final String idSession = pref.getString("sessionUserId_key", "");
 
         //Asignar que Adapter le va a pasar la información
-        recycler = root.findViewById(R.id.recycler_misRegistros);
+        recycler = root.findViewById(R.id.recyclerViewRegistros);
         recycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL,false));
 
         AdapterRegistros adapter = new AdapterRegistros(getActivity(), registrosViewModel.getListRegistros(idSession));
         recycler.setAdapter(adapter);
 
-        final TextView textView = root.findViewById(R.id.text_registros);
-        registrosViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 
