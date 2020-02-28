@@ -30,7 +30,6 @@ public class MusicFragment extends Fragment {
                 ViewModelProviders.of(this).get(MusicViewModel.class);
         View root = inflater.inflate(R.layout.music_fragment, container, false);
 
-
         play = root.findViewById(R.id.buttonPlay);
         pause = root.findViewById(R.id.buttonStop);
 
