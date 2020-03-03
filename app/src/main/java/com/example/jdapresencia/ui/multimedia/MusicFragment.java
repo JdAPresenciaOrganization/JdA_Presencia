@@ -24,6 +24,7 @@ public class MusicFragment extends Fragment {
         musicViewModel =
                 ViewModelProviders.of(this).get(MusicViewModel.class);
         View root = inflater.inflate(R.layout.music_fragment, container, false);
-        return inflater.inflate(R.layout.music_fragment, container, false);
+
+        return root;
     }
 }
