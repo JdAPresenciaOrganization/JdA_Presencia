@@ -14,17 +14,27 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.jdapresencia.R;
+import com.example.jdapresencia.model.Directory;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -40,6 +50,8 @@ public class UserProfileFragment extends Fragment {
 
     ImageView imageView;
     ImageButton bUpload, bFoto;
+    Button bEditData;
+    EditText upName, upNumber, upEmail;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -95,7 +107,54 @@ public class UserProfileFragment extends Fragment {
             }
         });
 
+        //Datos usuario, por añadir o editar
+        bEditData = root.findViewById(R.id.button_userModify);
+        upName = root.findViewById(R.id.upName);
+        upNumber = root.findViewById(R.id.upNumber);
+        upEmail = root.findViewById(R.id.upEmail);
+
+        //Se setean los campos en caso de que el usuario tenga ya datos registrados
+        final DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = database.child("Directory");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Directory directory = dataSnapshot.child(idSession).getValue(Directory.class);
+
+                upName.setText(directory.getName());
+                upNumber.setText(directory.getNumber());
+                upEmail.setText(directory.getEmail());
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("@@@", "onCancelled", databaseError.toException());
+            }
+        });
+
+        bEditData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userProfileData(upName.getText().toString(), upNumber.getText().toString(),
+                        upEmail.getText().toString(), idSession);
+            }
+        });
+
         return root;
+    }
+
+    private void userProfileData(String upName, String upNumber, String upEmail, String idSession) {
+        if (TextUtils.isEmpty(upName) || TextUtils.isEmpty(upNumber) || TextUtils.isEmpty(upEmail)) {
+            Toast.makeText(getContext(), "Enter data", Toast.LENGTH_SHORT).show();
+        } else {
+            FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("Directory")
+                    .child(idSession)
+                    .setValue(new Directory(upName, upNumber, upEmail, ""));
+
+            Toast.makeText(getContext(), "Data added successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

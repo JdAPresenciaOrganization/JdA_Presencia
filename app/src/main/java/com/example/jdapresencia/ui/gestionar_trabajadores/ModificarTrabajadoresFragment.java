@@ -33,8 +33,8 @@ public class ModificarTrabajadoresFragment extends Fragment {
         final View root = inflater.inflate(R.layout.fragment_modificar_trabajadores, container, false);
 
         usernameToModify = root.findViewById(R.id.usernameModify);
-        usernameUpdate = root.findViewById(R.id.usernameModifyUpdate);
-        pwdUpdate = root.findViewById(R.id.passwordModifyUpdate);
+        usernameUpdate = root.findViewById(R.id.upNumber);
+        pwdUpdate = root.findViewById(R.id.upEmail);
         radioGroup = root.findViewById(R.id.radioGroupUserRol);
         bUpdateWorker = root.findViewById(R.id.button_userModify);
 
