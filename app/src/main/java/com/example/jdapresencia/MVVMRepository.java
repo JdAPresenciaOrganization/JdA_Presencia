@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.jdapresencia.database.AppDatabase;
+import com.example.jdapresencia.model.Directory;
 import com.example.jdapresencia.model.Mensaje;
 import com.example.jdapresencia.model.Registro;
 import com.example.jdapresencia.model.User;
@@ -728,6 +729,27 @@ public class MVVMRepository {
 
         // Clear the input
         msg.setText("");
+    }
+
+    /**
+     * Add or modify user data
+     * @param upName
+     * @param upNumber
+     * @param upEmail
+     * @param idSession
+     */
+    public static void userProfileData(String upName, String upNumber, String upEmail, String idSession) {
+        if (TextUtils.isEmpty(upName) || TextUtils.isEmpty(upNumber) || TextUtils.isEmpty(upEmail)) {
+            Toast.makeText(context, "Enter data", Toast.LENGTH_SHORT).show();
+        } else {
+            FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("Directory")
+                    .child(idSession)
+                    .setValue(new Directory(upName, upNumber, upEmail));
+
+            Toast.makeText(context, "Data added successfully", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**************** FIN FIREBASE METHODS ****************/

@@ -2,13 +2,12 @@ package com.example.jdapresencia.model;
 
 public class Directory {
 
-    String name, number, email, photo;
+    String name, number, email;
 
-    public Directory(String name, String number, String email, String photo) {
+    public Directory(String name, String number, String email) {
         this.name = name;
         this.number = number;
         this.email = email;
-        this.photo = photo;
     }
 
     public Directory(){
@@ -37,13 +36,5 @@ public class Directory {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
     }
 }

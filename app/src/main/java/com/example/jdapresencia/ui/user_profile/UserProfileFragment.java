@@ -139,26 +139,12 @@ public class UserProfileFragment extends Fragment {
         bEditData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userProfileData(upName.getText().toString(), upNumber.getText().toString(),
+                userProfileViewModel.userProfileData(upName.getText().toString(), upNumber.getText().toString(),
                         upEmail.getText().toString(), idSession);
             }
         });
 
         return root;
-    }
-
-    private void userProfileData(String upName, String upNumber, String upEmail, String idSession) {
-        if (TextUtils.isEmpty(upName) || TextUtils.isEmpty(upNumber) || TextUtils.isEmpty(upEmail)) {
-            Toast.makeText(getContext(), "Enter data", Toast.LENGTH_SHORT).show();
-        } else {
-            FirebaseDatabase.getInstance()
-                    .getReference()
-                    .child("Directory")
-                    .child(idSession)
-                    .setValue(new Directory(upName, upNumber, upEmail, ""));
-
-            Toast.makeText(getContext(), "Data added successfully", Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
