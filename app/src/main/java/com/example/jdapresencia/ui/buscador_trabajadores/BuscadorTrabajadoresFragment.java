@@ -103,7 +103,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
             private TextView uid;
             private TextView username;
             private TextView rol;
-            private Button boton_ver_registros;
+            private Button boton_ver_registros, bPerfil;
 
             public ViewHolder(View v) {
                 super(v);
@@ -112,6 +112,7 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                 username = v.findViewById(R.id.view_holder_username);
                 rol = v.findViewById(R.id.view_holder_rol);
                 boton_ver_registros = v.findViewById(R.id.view_holder_boton);
+                bPerfil = v.findViewById(R.id.view_holder_perfil);
 
                 boton_ver_registros.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -124,6 +125,20 @@ public class BuscadorTrabajadoresFragment extends Fragment {
                         fragment.setArguments(bundle);
                         //Se crea un nuevo fragment en mobile_navigation con el layout correspondiente de la clase detalle
                         Navigation.findNavController(itemView).navigate(R.id.nav_registros_trabajadores, bundle);
+                    }
+                });
+
+                bPerfil.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        PerfilTrabajadorFragment fragment = new PerfilTrabajadorFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("uid_key", usersList.get(getAdapterPosition()).getIdU());
+
+                        fragment.setArguments(bundle);
+                        //Se crea un nuevo fragment en mobile_navigation con el layout correspondiente de la clase detalle
+                        Navigation.findNavController(itemView).navigate(R.id.nav_perfil_trabajador, bundle);
                     }
                 });
             }

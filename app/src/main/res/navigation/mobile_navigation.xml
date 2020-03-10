@@ -41,6 +41,11 @@
         tools:layout="@layout/fragment_registros_trabajador" />
 
     <fragment
+        android:id="@+id/nav_perfil_trabajador"
+        android:name="com.example.jdapresencia.ui.buscador_trabajadores.PerfilTrabajadorFragment"
+        tools:layout="@layout/fragment_perfil_trabajador" />
+
+    <fragment
         android:id="@+id/nav_profile"
         android:name="com.example.jdapresencia.ui.user_profile.UserProfileFragment"
         android:label="@string/menu_profile"
