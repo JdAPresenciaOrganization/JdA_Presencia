@@ -122,9 +122,13 @@ public class UserProfileFragment extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Directory directory = dataSnapshot.child(idSession).getValue(Directory.class);
 
-                upName.setText(directory.getName());
-                upNumber.setText(directory.getNumber());
-                upEmail.setText(directory.getEmail());
+                if (directory != null) {
+                    upName.setText(directory.getName());
+                    upNumber.setText(directory.getNumber());
+                    upEmail.setText(directory.getEmail());
+                } else {
+                    Log.e("@@@", "dataSnapshot no data");
+                }
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
