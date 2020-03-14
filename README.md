@@ -1,10 +1,10 @@
 # JdA_Presencia
 
 jdA Presència versió 4 - **minSdkVersion 26**\
--> Todos los usuarios pueden insertar o modificar sus datos de perfil (imagen selfie, nombre, número y email).
--> Directorio de trabajadores creado (Buscador trabajadores), visible para usuarios administradores.
--> Desde el directorio (Buscador trabajadores) se puede ver el perfil y los registros de todos los trabajadores.
--> En el perfil se carga, si el usuario previamente ha insertado los datos en su perfil, sus datos.
+-> Todos los usuarios pueden insertar o modificar sus datos de perfil (imagen selfie, nombre, número y email).\
+-> Directorio de trabajadores creado (Buscador trabajadores), visible para usuarios administradores.\
+-> Desde el directorio (Buscador trabajadores) se puede ver el perfil y los registros de todos los trabajadores.\
+-> En el perfil se carga, si el usuario previamente ha insertado los datos en su perfil, sus datos, recuperados en JSON desde Firebase.\
 -> Añadido apartado multimedia con una canción y un video de muestra.
 
 jdA Presència versió 3 - **minSdkVersion 26**\
