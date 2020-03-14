@@ -2,6 +2,7 @@ package com.example.jdapresencia.ui.buscador_trabajadores;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -13,9 +14,17 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.jdapresencia.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,9 +53,7 @@ public class PerfilTrabajadorFragment extends Fragment {
         Bundle bundle = this.getArguments();
         int uid = bundle.getInt("uid_key");
 
-        Toast.makeText(getContext(), String.valueOf(uid), Toast.LENGTH_SHORT).show();
-
-        FirebaseDirectory firebaseDirectory = new FirebaseDirectory();
+        FirebaseDirectory firebaseDirectory = new FirebaseDirectory(String.valueOf(uid));
         firebaseDirectory.execute();
 
         return root;
@@ -55,6 +62,11 @@ public class PerfilTrabajadorFragment extends Fragment {
     public class FirebaseDirectory extends AsyncTask<String, String, String> {
 
         String forecastJsonStr = null;
+        String idUsuario;
+
+        public FirebaseDirectory(String idUsuario) {
+            this.idUsuario = idUsuario;
+        }
 
         @Override
         protected String doInBackground(String... strings) {
@@ -135,6 +147,43 @@ public class PerfilTrabajadorFragment extends Fragment {
                 // get JSONObject from JSON file
                 JSONObject obj = new JSONObject(forecastJsonStr);
 
+                final ImageView imageView = getActivity().findViewById(R.id.imageView);
+                TextView upName = getActivity().findViewById(R.id.upName);
+                TextView upNumber = getActivity().findViewById(R.id.upNumber);
+                TextView upEmail = getActivity().findViewById(R.id.upEmail);
+
+                if (obj.has("id"+idUsuario)) {
+                    JSONObject jId = obj.getJSONObject("id"+idUsuario);
+                    String email = jId.getString("email");
+                    String name = jId.getString("name");
+                    String number = jId.getString("number");
+
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference storageRef = storage.getReference();
+
+                    storageRef.child(idUsuario + ".jpg").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            // Got the download URL for 'users/me/profile.png'
+                            // Pass it to Picasso to download, show in ImageView and caching
+                            Picasso.get().load(uri).into(imageView);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                            Log.i("INFO", "No user image");
+                        }
+                    });
+
+                    upName.setText("Nombre: " + name);
+                    upNumber.setText("Número: " + number);
+                    upEmail.setText("Email: " + email);
+                } else {
+                    upName.setText("Nombre: ");
+                    upNumber.setText("Número: ");
+                    upEmail.setText("Email: ");
+                }
 
             } catch (JSONException e) {
                 e.printStackTrace();
