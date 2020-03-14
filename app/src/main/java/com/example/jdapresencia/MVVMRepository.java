@@ -745,7 +745,7 @@ public class MVVMRepository {
             FirebaseDatabase.getInstance()
                     .getReference()
                     .child("Directory")
-                    .child(idSession)
+                    .child("id"+idSession)
                     .setValue(new Directory(upName, upNumber, upEmail));
 
             Toast.makeText(context, "Data added successfully", Toast.LENGTH_SHORT).show();

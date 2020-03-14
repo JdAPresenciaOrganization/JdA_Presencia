@@ -119,7 +119,7 @@ public class UserProfileFragment extends Fragment {
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Directory directory = dataSnapshot.child(idSession).getValue(Directory.class);
+                Directory directory = dataSnapshot.child("id"+idSession).getValue(Directory.class);
 
                 if (directory != null) {
                     upName.setText(directory.getName());
